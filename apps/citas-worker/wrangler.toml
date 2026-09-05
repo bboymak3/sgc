@@ -1,0 +1,28 @@
+[vars]
+BUSINESS_PHONE = "56939026185"
+BUSINESS_NAME = "SGC"
+SGCORDENES_URL = "https://sgc-ordenes.pages.dev"
+
+# D1 databases
+[[d1_databases]]
+binding = "DB"
+database_name = "sgc_citas_db"
+database_id = "1dc3a88b-7ab1-4e57-99c0-325ac003b193"
+
+[[d1_databases]]
+binding = "TALLER_DB"
+database_name = "sgc_ordenes_db"
+database_id = "5c1ef5cd-a0ea-4720-aba2-c660ec125dd2"
+
+# Static assets (UI del chat IA)
+[assets]
+directory = "./static"
+binding = "ASSETS"
+
+# Workers AI
+[ai]
+binding = "AI"
+
+name = "sgc-citas"
+main = "src/index.ts"
+compatibility_date = "2025-10-08"

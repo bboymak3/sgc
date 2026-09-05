@@ -1,0 +1,666 @@
+<!DOCTYPE html>
+<html lang="es-CL">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Global Pro - Agenda tu cita</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+<style>
+  :root {
+    --gp-green: #16a34a;
+    --gp-green-dark: #15803d;
+    --gp-green-light: #22c55e;
+    --gp-bg: #0a0a0a;
+    --gp-card: #1a1a1a;
+    --gp-border: #2a2a2a;
+    --gp-text: #e8e8e8;
+    --gp-muted: #888;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    background: var(--gp-bg);
+    color: var(--gp-text);
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+  }
+
+  /* Header */
+  .chat-header {
+    background: linear-gradient(135deg, var(--gp-green) 0%, var(--gp-green-dark) 100%);
+    padding: 14px 18px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex-shrink: 0;
+  }
+  .chat-header .avatar {
+    width: 40px; height: 40px;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.2);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 1.2rem; color: #fff;
+  }
+  .chat-header .info h3 { color: #fff; font-size: 0.95rem; font-weight: 700; }
+  .chat-header .info p { color: rgba(255,255,255,0.8); font-size: 0.75rem; }
+  .chat-header .status-dot {
+    width: 8px; height: 8px;
+    background: #4ade80;
+    border-radius: 50%;
+    animation: blink 2s infinite;
+    margin-left: auto;
+  }
+  @keyframes blink {
+    0%,100% { opacity: 1; }
+    50% { opacity: 0.3; }
+  }
+
+  /* Messages area */
+  .chat-messages {
+    flex: 1;
+    overflow-y: auto;
+    padding: 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    scroll-behavior: smooth;
+  }
+  .chat-messages::-webkit-scrollbar { width: 4px; }
+  .chat-messages::-webkit-scrollbar-thumb { background: #333; border-radius: 4px; }
+
+  .msg {
+    max-width: 85%;
+    padding: 12px 16px;
+    border-radius: 16px;
+    font-size: 0.9rem;
+    line-height: 1.5;
+    word-wrap: break-word;
+    animation: fadeIn 0.3s ease;
+  }
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(8px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  .msg.bot {
+    align-self: flex-start;
+    background: var(--gp-card);
+    border: 1px solid var(--gp-border);
+    border-bottom-left-radius: 4px;
+  }
+  .msg.user {
+    align-self: flex-end;
+    background: var(--gp-green);
+    color: #fff;
+    border-bottom-right-radius: 4px;
+  }
+  .msg .cita-json {
+    background: rgba(22,163,74,0.1);
+    border: 1px solid var(--gp-green);
+    border-radius: 10px;
+    padding: 12px;
+    margin-top: 8px;
+  }
+  .msg .cita-json .field { display: flex; justify-content: space-between; padding: 4px 0; border-bottom: 1px solid rgba(255,255,255,0.05); }
+  .msg .cita-json .field:last-child { border: none; }
+  .msg .cita-json .label { color: var(--gp-muted); font-size: 0.8rem; }
+  .msg .cita-json .value { font-weight: 600; font-size: 0.85rem; }
+
+  .btn-confirm {
+    display: inline-block;
+    margin-top: 10px;
+    padding: 10px 20px;
+    background: var(--gp-green);
+    color: #fff;
+    border: none;
+    border-radius: 8px;
+    font-size: 0.85rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .btn-confirm:hover { background: var(--gp-green-dark); transform: scale(1.02); }
+
+  .btn-cancel {
+    display: inline-block;
+    margin-top: 10px;
+    margin-left: 8px;
+    padding: 10px 20px;
+    background: transparent;
+    color: var(--gp-muted);
+    border: 1px solid #444;
+    border-radius: 8px;
+    font-size: 0.85rem;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .btn-cancel:hover { border-color: #888; color: #fff; }
+
+  /* Typing indicator */
+  .typing {
+    align-self: flex-start;
+    display: flex;
+    gap: 4px;
+    padding: 12px 18px;
+    background: var(--gp-card);
+    border: 1px solid var(--gp-border);
+    border-radius: 16px;
+    border-bottom-left-radius: 4px;
+  }
+  .typing span {
+    width: 8px; height: 8px;
+    background: var(--gp-muted);
+    border-radius: 50%;
+    animation: typingBounce 1.4s infinite;
+  }
+  .typing span:nth-child(2) { animation-delay: 0.2s; }
+  .typing span:nth-child(3) { animation-delay: 0.4s; }
+  @keyframes typingBounce {
+    0%,60%,100% { transform: translateY(0); }
+    30% { transform: translateY(-6px); }
+  }
+
+  /* Success banner */
+  .success-banner {
+    background: linear-gradient(135deg, var(--gp-green) 0%, #059669 100%);
+    padding: 14px;
+    border-radius: 12px;
+    text-align: center;
+    margin-top: 8px;
+  }
+  .success-banner h4 { color: #fff; margin-bottom: 4px; }
+  .success-banner p { color: rgba(255,255,255,0.9); font-size: 0.8rem; }
+
+  /* Input area */
+  .chat-input-area {
+    padding: 12px 16px;
+    background: var(--gp-card);
+    border-top: 1px solid var(--gp-border);
+    display: flex;
+    gap: 10px;
+    align-items: flex-end;
+    flex-shrink: 0;
+  }
+  .chat-input-area textarea {
+    flex: 1;
+    background: var(--gp-bg);
+    border: 1px solid var(--gp-border);
+    border-radius: 12px;
+    padding: 12px 16px;
+    color: var(--gp-text);
+    font-size: 0.9rem;
+    font-family: inherit;
+    resize: none;
+    max-height: 100px;
+    outline: none;
+    transition: border-color 0.2s;
+  }
+  .chat-input-area textarea:focus { border-color: var(--gp-green); }
+  .chat-input-area textarea::placeholder { color: #555; }
+  .chat-input-area button {
+    width: 44px; height: 44px;
+    border-radius: 50%;
+    background: var(--gp-green);
+    border: none;
+    color: #fff;
+    font-size: 1.1rem;
+    cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    transition: all 0.2s;
+    flex-shrink: 0;
+  }
+  .chat-input-area button:hover { background: var(--gp-green-dark); transform: scale(1.05); }
+  .chat-input-area button:disabled { opacity: 0.4; cursor: not-allowed; transform: none; }
+
+  /* Quick actions */
+  .quick-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 10px;
+  }
+  .quick-action {
+    padding: 8px 14px;
+    background: rgba(22,163,74,0.15);
+    border: 1px solid rgba(22,163,74,0.3);
+    border-radius: 20px;
+    color: var(--gp-green-light);
+    font-size: 0.8rem;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .quick-action:hover {
+    background: rgba(22,163,74,0.3);
+    border-color: var(--gp-green);
+  }
+</style>
+</head>
+<body>
+  <div class="chat-header">
+    <div class="avatar"><i class="fas fa-robot"></i></div>
+    <div class="info">
+      <h3>Global Pro Asistente</h3>
+      <p>Agenda tu cita con IA</p>
+    </div>
+    <div style="display:flex;gap:8px;align-items:center">
+      <a href="/ordenes" style="color:rgba(255,255,255,.85);text-decoration:none;font-size:13px;background:rgba(255,255,255,.15);padding:5px 12px;border-radius:6px" title="Órdenes">📋</a>
+      <a href="/admin" style="color:rgba(255,255,255,.85);text-decoration:none;font-size:13px;background:rgba(255,255,255,.15);padding:5px 12px;border-radius:6px" title="Admin Servicios">🔧</a>
+    </div>
+    <div class="status-dot" title="En línea"></div>
+  </div>
+
+  <div class="chat-messages" id="chatMessages">
+    <div class="msg bot">
+      <p>¡Hola! 👋 Soy tu asistente de <strong>Global Pro Automotriz</strong>.</p>
+      <p style="margin-top:6px;">Puedo ayudarte a:</p>
+      <div class="quick-actions">
+        <div class="quick-action" onclick="sendQuick('Quiero agendar una cita')">📅 Agendar cita</div>
+        <div class="quick-action" onclick="askPatente()">🔍 Consultar mi vehículo</div>
+        <div class="quick-action" onclick="sendQuick('¿Qué servicios ofrecen?')">🔧 Ver servicios</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="chat-input-area">
+    <textarea id="userInput" placeholder="Escribe tu mensaje..." rows="1"
+              onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();sendMessage()}"></textarea>
+    <button id="sendBtn" onclick="sendMessage()" title="Enviar">
+      <i class="fas fa-paper-plane"></i>
+    </button>
+  </div>
+
+<script>
+const WORKER_URL = window.location.origin;
+let chatHistory = [];
+let isStreaming = false;
+let currentPatente = null;
+
+// ─── Normalizar fecha: convierte "mañana", "martes", etc. a YYYY-MM-DD ───
+function normalizarFecha(fechaStr) {
+  if (!fechaStr) return null;
+  // Ya está en formato YYYY-MM-DD
+  if (/^\d{4}-\d{2}-\d{2}$/.test(fechaStr.trim())) return fechaStr.trim();
+  // Formato DD/MM/YYYY
+  const dmy = fechaStr.match(/^(\d{1,2})[\/\-](\d{1,2})[\/\-](\d{4})$/);
+  if (dmy) return `${dmy[3]}-${dmy[2].padStart(2,'0')}-${dmy[1].padStart(2,'0')}`;
+  // Texto relativo - calcular desde la fecha actual (Chile UTC-3)
+  const now = new Date();
+  const utcMs = now.getTime() + now.getTimezoneOffset() * 60000;
+  const chile = new Date(utcMs + (-3) * 3600000);
+  const hoy = chile.toISOString().split('T')[0];
+  const diaSem = chile.getDay(); // 0=dom
+  const texto = fechaStr.toLowerCase().trim();
+  let offset = 0;
+  if (texto === 'hoy' || texto === 'hoy mismo') offset = 0;
+  else if (texto === 'mañana' || texto === 'manana') offset = 1;
+  else if (texto === 'pasado mañana' || texto === 'pasado manana') offset = 2;
+  else {
+    const diasMap = {'domingo':0,'lunes':1,'martes':2,'miercoles':3,'jueves':4,'viernes':5,'sabado':6,'sábado':6};
+ const diaNum = diasMap[texto];
+    if (diaNum !== undefined) {
+      offset = ((diaNum - diaSem + 7) % 7) || 7;
+      if (offset === 0) offset = 7;
+    }
+  }
+  if (offset > 0) {
+    const target = new Date(chile);
+    target.setDate(target.getDate() + offset);
+    return target.toISOString().split('T')[0];
+  }
+  return null;
+}
+
+// ─── Normalizar hora: convierte "3pm", "4:00 pm", "10", etc. a HH:MM ───
+function normalizarHora(horaStr) {
+  if (!horaStr) return null;
+  if (/^\d{1,2}:\d{2}$/.test(horaStr.trim())) {
+    const [h, m] = horaStr.trim().split(':').map(Number);
+    if (h >= 0 && h <= 23 && m >= 0 && m <= 59) return `${String(h).padStart(2,'0')}:${String(m).padStart(2,'0')}`;
+  }
+  const texto = horaStr.toLowerCase().trim();
+  // "3pm", "4:00pm", "3 pm"
+  let match = texto.match(/^(\d{1,2})(?::(\d{2}))?\s*(pm|p\.m\.)/);
+  if (match) {
+    let h = parseInt(match[1]); if (h === 12) h = 0; else if (h < 12) h += 12;
+    const m = match[2] ? parseInt(match[2]) : 0;
+    return `${String(h).padStart(2,'0')}:${String(m).padStart(2,'0')}`;
+  }
+  // "10am", "9:00am", "10 am"
+  match = texto.match(/^(\d{1,2})(?::(\d{2}))?\s*(am|a\.m\.)/);
+  if (match) {
+    let h = parseInt(match[1]); if (h === 12) h = 0;
+    const m = match[2] ? parseInt(match[2]) : 0;
+    return `${String(h).padStart(2,'0')}:${String(m).padStart(2,'0')}`;
+  }
+  // Solo número: "3" → 15:00 (PM), "10" → 10:00 (AM)
+  match = texto.match(/^(\d{1,2})$/);
+  if (match) {
+    let h = parseInt(match[1]);
+    if (h >= 1 && h <= 6) h += 12; // 1-6 → PM (13-18)
+    if (h > 23) h = 23;
+    return `${String(h).padStart(2,'0')}:00`;
+  }
+  return null;
+}
+
+function getEmbeddedParam() {
+  const params = new URLSearchParams(window.location.search);
+  return params.get('embedded') === 'true';
+}
+
+function sendQuick(text) {
+  document.getElementById('userInput').value = text;
+  sendMessage();
+}
+
+function askPatente() {
+  document.getElementById('userInput').value = '';
+  document.getElementById('userInput').focus();
+  addBotMessage('Escribe la patente de tu vehículo y te mostraré la información que tenemos registrada. 🚗');
+}
+
+function addBotMessage(html, preserve = true) {
+  const container = document.getElementById('chatMessages');
+  const div = document.createElement('div');
+  div.className = 'msg bot';
+  div.innerHTML = html;
+  container.appendChild(div);
+  container.scrollTop = container.scrollHeight;
+}
+
+function addUserMessage(text) {
+  const container = document.getElementById('chatMessages');
+  const div = document.createElement('div');
+  div.className = 'msg user';
+  div.textContent = text;
+  container.appendChild(div);
+  container.scrollTop = container.scrollHeight;
+}
+
+function showTyping() {
+  const container = document.getElementById('chatMessages');
+  const div = document.createElement('div');
+  div.className = 'typing';
+  div.id = 'typingIndicator';
+  div.innerHTML = '<span></span><span></span><span></span>';
+  container.appendChild(div);
+  container.scrollTop = container.scrollHeight;
+}
+
+function hideTyping() {
+  const el = document.getElementById('typingIndicator');
+  if (el) el.remove();
+}
+
+async function sendMessage() {
+  if (isStreaming) return;
+
+  const input = document.getElementById('userInput');
+  const text = input.value.trim();
+  if (!text) return;
+
+  addUserMessage(text);
+  chatHistory.push({ role: 'user', content: text });
+  input.value = '';
+  isStreaming = true;
+  document.getElementById('sendBtn').disabled = true;
+
+  // Check if message contains a patente pattern (chilean: 4 letters + 2-3 numbers/letters)
+  const patenteMatch = text.match(/\b([A-Za-z]{2,4}[\s-]?[A-Za-z0-9]{2,4})\b/);
+  if (patenteMatch && !currentPatente) {
+    currentPatente = patenteMatch[1].toUpperCase().replace(/[\s-]/g, '');
+  }
+
+  showTyping();
+
+  try {
+    const response = await fetch(`${WORKER_URL}/api/chat`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        messages: chatHistory,
+        patente: currentPatente || undefined,
+      }),
+    });
+
+    if (!response.ok) {
+      throw new Error('Error del servidor');
+    }
+
+    hideTyping();
+
+    // Read SSE stream
+    const reader = response.body.getReader();
+    const decoder = new TextDecoder();
+    let fullText = '';
+
+    const msgDiv = document.createElement('div');
+    msgDiv.className = 'msg bot';
+    document.getElementById('chatMessages').appendChild(msgDiv);
+
+    while (true) {
+      const { done, value } = await reader.read();
+      if (done) break;
+
+      const chunk = decoder.decode(value, { stream: true });
+      const lines = chunk.split('\n');
+
+      for (const line of lines) {
+        if (line.startsWith('data: ')) {
+          const data = line.slice(6).trim();
+          if (data === '[DONE]') continue;
+          try {
+            const parsed = JSON.parse(data);
+            if (parsed.response) {
+              fullText += parsed.response;
+              msgDiv.innerHTML = formatMessage(fullText);
+              document.getElementById('chatMessages').scrollTop = document.getElementById('chatMessages').scrollHeight;
+            }
+          } catch (e) { /* skip */ }
+        }
+      }
+    }
+
+    chatHistory.push({ role: 'assistant', content: fullText });
+
+    // Check if the response contains a CITA_JSON block
+    checkForCitaJson(fullText, msgDiv);
+
+  } catch (error) {
+    hideTyping();
+    addBotMessage('❌ Error de conexión. Intenta de nuevo en un momento.');
+    console.error('Chat error:', error);
+  } finally {
+    isStreaming = false;
+    document.getElementById('sendBtn').disabled = false;
+    document.getElementById('userInput').focus();
+  }
+}
+
+function formatMessage(text) {
+  // Convert markdown-like formatting
+  let html = text;
+  // Bold
+  html = html.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+  // Line breaks
+  html = html.replace(/\n/g, '<br>');
+  return html;
+}
+
+function checkForCitaJson(text, msgDiv) {
+  const match = text.match(/\[CITA_JSON\]\s*([\s\S]*?)\s*\[\/CITA_JSON\]/);
+  if (match) {
+    try {
+      // Limpiar posibles caracteres basura antes del JSON
+      let jsonStr = match[1].trim();
+      // Si el bot puso texto antes del {, buscar el primer {
+      const braceIdx = jsonStr.indexOf('{');
+      if (braceIdx > 0) jsonStr = jsonStr.substring(braceIdx);
+      // Remover texto después del último }
+      const lastBrace = jsonStr.lastIndexOf('}');
+      if (lastBrace >= 0 && lastBrace < jsonStr.length - 1) jsonStr = jsonStr.substring(0, lastBrace + 1);
+
+      const cita = JSON.parse(jsonStr);
+      // Normalizar fecha y hora si la IA no puso formato correcto
+      const fechaNorm = normalizarFecha(cita.fecha);
+      const horaNorm = normalizarHora(cita.hora);
+      if (fechaNorm && fechaNorm !== cita.fecha) {
+        console.log('Fecha normalizada:', cita.fecha, '→', fechaNorm);
+        cita.fecha = fechaNorm;
+      }
+      if (horaNorm && horaNorm !== cita.hora) {
+        console.log('Hora normalizada:', cita.hora, '→', horaNorm);
+        cita.hora = horaNorm;
+      }
+      // Asegurar formato final de hora (padStart)
+      if (cita.hora && /^\d:\d{2}$/.test(cita.hora)) cita.hora = '0' + cita.hora;
+
+      // Validar que ambos sean válidos antes de mostrar confirmación
+      if (!/^\d{4}-\d{2}-\d{2}$/.test(cita.fecha) || !/^\d{2}:\d{2}$/.test(cita.hora)) {
+        console.warn('Formato inválido - fecha:', cita.fecha, 'hora:', cita.hora);
+        // Intentar auto-corregir: si la hora tiene "hrs" o texto extra, limpiar
+        cita.hora = String(cita.hora).replace(/[^\d:]/g, '').trim();
+        if (!/^\d{4}-\d{2}-\d{2}$/.test(cita.fecha) || !/^\d{2}:\d{2}$/.test(cita.hora)) {
+          addBotMessage('❌ Error en el formato de fecha u hora. Por favor intenta de nuevo diciendo la fecha y hora específicas, como "mañana a las 10:30".');
+          return;
+        }
+      }
+      // Validar campos mínimos
+      if (!cita.patente && !cita.nombre && !cita.telefono && !cita.servicio) {
+        console.error('Cita JSON sin campos mínimos:', cita);
+        addBotMessage('❌ Faltan datos de la cita. Por favor ingresa patente, nombre, teléfono y servicio.');
+        return;
+      }
+      showCitaConfirmation(cita, msgDiv);
+    } catch (e) {
+      console.error('Error parsing CITA_JSON:', e, match[1]);
+    }
+  }
+}
+
+function showCitaConfirmation(cita, msgDiv) {
+  // Remove the raw JSON from display
+  let cleanText = msgDiv.innerHTML.replace(/\[CITA_JSON\][\s\S]*?\[\/CITA_JSON\]/g, '');
+  // Formatear fecha YYYY-MM-DD → DD/MM/YYYY para mostrar
+  const fechaParts = cita.fecha.split('-');
+  const fechaLegible = fechaParts.length === 3 ? `${fechaParts[2]}/${fechaParts[1]}/${fechaParts[0]}` : cita.fecha;
+  const vehiculo = [cita.marca, cita.modelo, cita.anio, cita.color ? '('+cita.color+')' : ''].filter(Boolean).join(' ');
+  const tipoLabel = cita.tipo_atencion === 'domicilio' ? '🏠 Domicilio' : '🔧 En Taller';
+
+  let fields = '';
+  fields += `<div class="field"><span class="label">🚗 Patente</span><span class="value">${cita.patente}</span></div>`;
+  if (vehiculo) fields += `<div class="field"><span class="label">🚘 Vehículo</span><span class="value">${vehiculo}</span></div>`;
+  fields += `<div class="field"><span class="label">👤 Nombre</span><span class="value">${cita.nombre}${cita.apellido ? ' ' + cita.apellido : ''}</span></div>`;
+  fields += `<div class="field"><span class="label">📞 Teléfono</span><span class="value">${cita.telefono}</span></div>`;
+  fields += `<div class="field"><span class="label">🔧 Servicio</span><span class="value">${cita.servicio}</span></div>`;
+  fields += `<div class="field"><span class="label">📍 Atención</span><span class="value">${tipoLabel}</span></div>`;
+  fields += `<div class="field"><span class="label">📅 Fecha</span><span class="value">${fechaLegible}</span></div>`;
+  fields += `<div class="field"><span class="label">⏰ Hora</span><span class="value">${cita.hora} hrs</span></div>`;
+  if (cita.direccion) fields += `<div class="field"><span class="label">🏠 Dirección</span><span class="value">${cita.direccion}</span></div>`;
+  if (cita.requerimientos) fields += `<div class="field"><span class="label">📝 Requerimientos</span><span class="value">${cita.requerimientos}</span></div>`;
+
+  cleanText += `
+    <div class="cita-json">
+      ${fields}
+    </div>
+    <button class="btn-confirm" onclick="confirmarCita('${encodeURIComponent(JSON.stringify(cita))}')">
+      <i class="fas fa-check"></i> Confirmar Cita
+    </button>
+    <button class="btn-cancel" onclick="cancelarCita()">Cancelar</button>
+  `;
+  msgDiv.innerHTML = cleanText;
+  document.getElementById('chatMessages').scrollTop = document.getElementById('chatMessages').scrollHeight;
+}
+
+async function confirmarCita(encodedCita) {
+  const cita = JSON.parse(decodeURIComponent(encodedCita));
+  const btn = event.target.closest('.btn-confirm');
+  if (btn) {
+    btn.disabled = true;
+    btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Agendando...';
+  }
+
+  try {
+    const response = await fetch(`${WORKER_URL}/api/agendar`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        patente: cita.patente || '',
+        nombre: cita.nombre || '',
+        apellido: cita.apellido || '',
+        telefono: cita.telefono || '',
+        servicio: cita.servicio || '',
+        fecha: cita.fecha || '',
+        hora: cita.hora || '',
+        marca: cita.marca || '',
+        modelo: cita.modelo || '',
+        anio: cita.anio || '',
+        color: cita.color || '',
+        tipo_atencion: cita.tipo_atencion || 'taller',
+        direccion: cita.direccion || '',
+        referencia_direccion: cita.referencia_direccion || '',
+        requerimientos: cita.requerimientos || cita.observaciones || '',
+        observaciones: cita.requerimientos || cita.observaciones || '',
+        canal: 'chat',
+      }),
+    });
+
+    const data = await response.json();
+
+    if (data.success) {
+      const numOrden = data.orden_sgc
+        ? data.orden_sgc.formato
+        : '';
+
+      addBotMessage(`
+        <div class="success-banner">
+          <h4>✅ ¡Cita Confirmada!</h4>
+          <p>Tu cita ha sido agendada exitosamente</p>
+          ${numOrden ? `<p style="margin-top:6px;"><strong>Orden: ${numOrden}</strong></p>` : ''}
+        </div>
+        <p style="margin-top:10px;">Te esperamos el <strong>${cita.fecha}</strong> a las <strong>${cita.hora}</strong> hrs.</p>
+        <p style="margin-top:4px; color: var(--gp-muted); font-size:0.8rem;">Si necesitas cambiar o cancelar, contáctanos al <strong>+56939026185</strong></p>
+        <div class="quick-actions" style="margin-top:10px;">
+          <div class="quick-action" onclick="resetChat()">📅 Agendar otra cita</div>
+        </div>
+      `);
+
+      // Notify parent if embedded
+      if (getEmbeddedParam()) {
+        try {
+          window.parent.postMessage({ type: 'cita_confirmada', data }, '*');
+        } catch(e) {}
+      }
+    } else {
+      addBotMessage(`❌ No se pudo agendar la cita: ${data.error || 'Error desconocido'}`);
+    }
+  } catch (error) {
+    addBotMessage('❌ Error de conexión al agendar. Intenta de nuevo.');
+  }
+}
+
+function cancelarCita() {
+  addBotMessage('Entendido, la cita ha sido cancelada. ¿En qué más puedo ayudarte? 🤔');
+  document.getElementById('userInput').focus();
+}
+
+function resetChat() {
+  chatHistory = [];
+  currentPatente = null;
+  document.getElementById('chatMessages').innerHTML = '';
+  addBotMessage('¡Hola de nuevo! 👋 ¿En qué te puedo ayudar?');
+  document.getElementById('userInput').focus();
+}
+
+// Auto-resize textarea
+document.getElementById('userInput').addEventListener('input', function() {
+  this.style.height = 'auto';
+  this.style.height = Math.min(this.scrollHeight, 100) + 'px';
+});
+
+// Focus input on load
+document.getElementById('userInput').focus();
+</script>
+</body>
+</html>

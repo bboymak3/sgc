@@ -1,0 +1,423 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Tracking - Global Pro Automotriz</title>
+    <meta name="theme-color" content="#a80000">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #111;
+            color: #fff;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+        .tracking-header {
+            background: linear-gradient(135deg, #a80000, #d90429);
+            padding: 15px 20px;
+            text-align: center;
+            position: relative;
+            z-index: 1000;
+        }
+        .tracking-header h5 {
+            color: #fff;
+            font-weight: 900;
+            margin: 0;
+            letter-spacing: 0.05em;
+        }
+        .tracking-header small {
+            color: rgba(255,255,255,0.8);
+        }
+        #map {
+            flex: 1;
+            width: 100%;
+            z-index: 1;
+        }
+        .info-panel {
+            background: #1a1a1a;
+            border-top: 3px solid #ffc800;
+            padding: 18px 20px;
+            z-index: 1000;
+        }
+        .info-row {
+            display: flex;
+            align-items: center;
+            margin-bottom: 10px;
+            font-size: 0.95rem;
+            gap: 12px;
+        }
+        .info-row i {
+            width: 24px;
+            text-align: center;
+            color: #ffc800;
+        }
+        .status-badge {
+            display: inline-block;
+            padding: 6px 16px;
+            border-radius: 999px;
+            font-weight: 700;
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            letter-spacing: 0.04em;
+        }
+        .status-pendiente { background: #fff3cd; color: #856404; }
+        .status-en-camino { background: #cce5ff; color: #004085; }
+        .status-en-sitio { background: #d1ecf1; color: #0c5460; }
+        .status-en-progreso { background: #d4edda; color: #155724; }
+        .status-completada { background: #28a745; color: #fff; }
+
+        .pulse-dot {
+            display: inline-block;
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: #28a745;
+            margin-right: 8px;
+            animation: pulse-dot 1.5s infinite;
+        }
+        .pulse-dot.inactive {
+            background: #6c757d;
+            animation: none;
+        }
+        @keyframes pulse-dot {
+            0% { box-shadow: 0 0 0 0 rgba(40, 167, 69, 0.7); }
+            70% { box-shadow: 0 0 0 10px rgba(40, 167, 69, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(40, 167, 69, 0); }
+        }
+        .error-container {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+            padding: 40px;
+            text-align: center;
+        }
+        .error-container i {
+            font-size: 4rem;
+            color: #d90429;
+            margin-bottom: 20px;
+        }
+        .eta-box {
+            background: #222;
+            border-radius: 14px;
+            padding: 14px;
+            text-align: center;
+            margin-top: 10px;
+            border: 1px solid #333;
+        }
+        .eta-value {
+            font-size: 1.8rem;
+            font-weight: 900;
+            color: #ffc800;
+        }
+        .eta-label {
+            font-size: 0.75rem;
+            color: #888;
+            text-transform: uppercase;
+        }
+        .last-update {
+            font-size: 0.75rem;
+            color: #666;
+            margin-top: 8px;
+            text-align: center;
+        }
+        /* Leaflet custom marker */
+        .technician-marker {
+            background: #d90429;
+            border: 3px solid #ffc800;
+            border-radius: 50%;
+            width: 20px;
+            height: 20px;
+            box-shadow: 0 0 15px rgba(217, 4, 41, 0.6);
+        }
+        .destination-marker {
+            background: #28a745;
+            border: 3px solid #fff;
+            border-radius: 50%;
+            width: 16px;
+            height: 16px;
+            box-shadow: 0 0 10px rgba(40, 167, 69, 0.5);
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Header -->
+    <div class="tracking-header">
+        <h5><i class="fas fa-satellite-dish me-2"></i>TRACKING EN VIVO</h5>
+        <small id="header-info">Global Pro Automotriz</small>
+    </div>
+
+    <!-- Error state (hidden by default) -->
+    <div id="error-screen" class="error-container" style="display:none;">
+        <i class="fas fa-map-marker-alt"></i>
+        <h4 id="error-title">Link invalido</h4>
+        <p id="error-msg" class="text-muted mt-2">El link de tracking no es valido o ha expirado.</p>
+    </div>
+
+    <!-- Map -->
+    <div id="map" style="display:none;"></div>
+
+    <!-- Info panel -->
+    <div id="info-panel" class="info-panel" style="display:none;">
+        <div class="d-flex justify-content-between align-items-center mb-2">
+            <div>
+                <span class="pulse-dot" id="live-indicator"></span>
+                <span id="status-text" style="font-weight:700;">Conectando...</span>
+            </div>
+            <span id="status-badge" class="status-badge status-pendiente">Pendiente</span>
+        </div>
+
+        <div class="info-row">
+            <i class="fas fa-car"></i>
+            <span id="info-vehiculo">--</span>
+        </div>
+        <div class="info-row">
+            <i class="fas fa-map-marker-alt"></i>
+            <span id="info-direccion">--</span>
+        </div>
+        <div class="info-row">
+            <i class="fas fa-user-cog"></i>
+            <span id="info-tecnico">--</span>
+        </div>
+
+        <div id="eta-container" class="eta-box" style="display:none;">
+            <div class="eta-label">Tecnico en camino</div>
+            <div class="eta-value" id="eta-minutes">--</div>
+            <div class="eta-label">minutos estimados</div>
+        </div>
+
+        <div id="arrived-box" class="eta-box" style="display:none; border-color:#28a745;">
+            <div style="font-size:1.3rem; font-weight:900; color:#28a745;">
+                <i class="fas fa-check-circle me-2"></i>Tecnico en el sitio
+            </div>
+            <div class="eta-label" style="margin-top:4px;">El tecnico ha llegado a tu ubicacion</div>
+        </div>
+
+        <div class="last-update" id="last-update">Actualizando...</div>
+    </div>
+
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script>
+        // ============================================
+        // TRACKING CLIENTE - Vista en tiempo real
+        // ============================================
+
+        const API_BASE = '/api/tracking';
+        let map = null;
+        let tecnicoMarker = null;
+        let destinoMarker = null;
+        let rutaLine = null;
+        let pollingTimer = null;
+        let token = null;
+        let lastData = null;
+
+        // Inicializar
+        document.addEventListener('DOMContentLoaded', function() {
+            // Obtener token de la URL
+            var params = new URLSearchParams(window.location.search);
+            token = params.get('token');
+
+            if (!token) {
+                mostrarError('Link invalido', 'Este link de tracking no es valido. Solicita un nuevo link al tecnico.');
+                return;
+            }
+
+            iniciarTracking();
+        });
+
+        function mostrarError(titulo, mensaje) {
+            document.getElementById('error-screen').style.display = 'flex';
+            document.getElementById('map').style.display = 'none';
+            document.getElementById('info-panel').style.display = 'none';
+            document.getElementById('error-title').textContent = titulo;
+            document.getElementById('error-msg').textContent = mensaje;
+        }
+
+        async function iniciarTracking() {
+            // Primera carga
+            await consultarTracking();
+
+            // Polling cada 10 segundos
+            pollingTimer = setInterval(async function() {
+                await consultarTracking();
+            }, 10000);
+        }
+
+        async function consultarTracking() {
+            try {
+                var response = await fetch(API_BASE + '?token=' + encodeURIComponent(token));
+                var data = await response.json();
+
+                if (!data.success) {
+                    clearInterval(pollingTimer);
+                    mostrarError('Orden no encontrada', data.error || 'No se pudo encontrar la orden asociada a este link.');
+                    return;
+                }
+
+                lastData = data;
+                renderizar(data);
+
+            } catch (error) {
+                console.error('Error consultando tracking:', error);
+                document.getElementById('last-update').textContent = 'Error de conexion... reintentando';
+            }
+        }
+
+        function renderizar(data) {
+            // Mostrar elementos
+            document.getElementById('map').style.display = 'block';
+            document.getElementById('info-panel').style.display = 'block';
+            document.getElementById('error-screen').style.display = 'none';
+
+            // Actualizar info
+            var orden = data.orden || {};
+            var patente = orden.patente || '';
+            var numero = orden.numero_orden ? String(orden.numero_orden).padStart(6, '0') : '';
+
+            document.getElementById('header-info').textContent = 'OT #' + numero + ' - Global Pro Automotriz';
+            document.getElementById('info-vehiculo').textContent = patente || 'Vehiculo';
+            document.getElementById('info-direccion').textContent = orden.direccion || 'Sin direccion';
+            document.getElementById('info-tecnico').textContent = (data.tecnico && data.tecnico.nombre) ? data.tecnico.nombre : 'Tecnico';
+
+            // Status badge
+            var badge = document.getElementById('status-badge');
+            var statusText = document.getElementById('status-text');
+            var liveIndicator = document.getElementById('live-indicator');
+            var estado = data.estado || '';
+
+            if (data.activo && data.ubicacion) {
+                liveIndicator.classList.remove('inactive');
+                statusText.textContent = 'En vivo';
+            } else {
+                liveIndicator.classList.add('inactive');
+                statusText.textContent = 'Sin señal';
+            }
+
+            // Mapear estado a clase y texto
+            var estadoMap = {
+                'Pendiente Visita': { clase: 'status-pendiente', texto: 'Pendiente' },
+                'En Sitio': { clase: 'status-en-sitio', texto: 'En el sitio' },
+                'En Progreso': { clase: 'status-en-progreso', texto: 'Trabajando' },
+                'Completada': { clase: 'status-completada', texto: 'Completada' },
+                'Aprobada': { clase: 'status-completada', texto: 'Aprobada' }
+            };
+            var estadoInfo = estadoMap[estado] || { clase: 'status-pendiente', texto: estado };
+            badge.className = 'status-badge ' + estadoInfo.clase;
+            badge.textContent = estadoInfo.texto;
+
+            // ETA o arrived box
+            var etaContainer = document.getElementById('eta-container');
+            var arrivedBox = document.getElementById('arrived-box');
+
+            if (estado === 'En Sitio' || estado === 'En Progreso') {
+                etaContainer.style.display = 'none';
+                arrivedBox.style.display = 'block';
+            } else if (data.activo && data.ubicacion) {
+                arrivedBox.style.display = 'none';
+                etaContainer.style.display = 'block';
+                // Estimación simple basada en distancia
+                estimarTiempo(data);
+            } else {
+                etaContainer.style.display = 'none';
+                arrivedBox.style.display = 'none';
+            }
+
+            // Última actualización
+            var ahora = new Date();
+            var horaStr = ahora.getHours().toString().padStart(2, '0') + ':' +
+                          ahora.getMinutes().toString().padStart(2, '0') + ':' +
+                          ahora.getSeconds().toString().padStart(2, '0');
+            document.getElementById('last-update').textContent = 'Ultima actualizacion: ' + horaStr;
+
+            // Renderizar mapa
+            renderizarMapa(data);
+        }
+
+        function estimarTiempo(data) {
+            // Si hay ubicación y dirección, calcular distancia aproximada
+            // Esto es una estimación simple basada en la distancia al destino
+            if (data.ubicacion && data.orden && data.orden.direccion) {
+                var etaEl = document.getElementById('eta-minutes');
+                // Sin API de rutas, mostramos un rango estimado
+                etaEl.textContent = '~15';
+            }
+        }
+
+        function renderizarMapa(data) {
+            var ubicacion = data.ubicacion;
+            var ruta = data.ruta || [];
+
+            // Inicializar mapa si no existe
+            if (!map) {
+                map = L.map('map', {
+                    zoomControl: true,
+                    attributionControl: false
+                }).setView([-33.45, -70.67], 13); // Default: Santiago de Chile
+
+                L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                    maxZoom: 19
+                }).addTo(map);
+
+                // Forzar re-render cuando se muestra
+                setTimeout(function() { map.invalidateSize(); }, 200);
+            }
+
+            // Si hay ubicación del técnico, centrar ahí
+            if (ubicacion && ubicacion.latitud && ubicacion.longitud) {
+                var lat = ubicacion.latitud;
+                var lng = ubicacion.longitud;
+
+                // Crear o actualizar marcador del técnico
+                if (!tecnicoMarker) {
+                    var techIcon = L.divIcon({
+                        className: '',
+                        html: '<div style="background:#d90429; border:3px solid #ffc800; border-radius:50%; width:22px; height:22px; box-shadow:0 0 15px rgba(217,4,41,0.6);"></div>',
+                        iconSize: [22, 22],
+                        iconAnchor: [11, 11]
+                    });
+                    tecnicoMarker = L.marker([lat, lng], { icon: techIcon }).addTo(map);
+                    tecnicoMarker.bindPopup('<strong>Tecnico en camino</strong>');
+                } else {
+                    tecnicoMarker.setLatLng([lat, lng]);
+                }
+
+                map.setView([lat, lng], 15);
+            }
+
+            // Dibujar ruta si hay puntos
+            if (ruta.length > 1) {
+                var rutaCoords = ruta.map(function(p) { return [p.lat, p.lng]; });
+
+                if (rutaLine) {
+                    rutaLine.setLatLngs(rutaCoords);
+                } else {
+                    rutaLine = L.polyline(rutaCoords, {
+                        color: '#ffc800',
+                        weight: 4,
+                        opacity: 0.8,
+                        dashArray: '8, 8'
+                    }).addTo(map);
+                }
+
+                // Ajustar vista para mostrar toda la ruta
+                try {
+                    map.fitBounds(rutaLine.getBounds(), { padding: [50, 50] });
+                } catch(e) {}
+            }
+        }
+
+        // Cleanup al salir
+        window.addEventListener('beforeunload', function() {
+            if (pollingTimer) clearInterval(pollingTimer);
+        });
+    </script>
+</body>
+</html>

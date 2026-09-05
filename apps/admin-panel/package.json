@@ -1,0 +1,10 @@
+{
+  "name": "sgc-admin",
+  "version": "1.0.0",
+  "description": "Panel admin del SGC - Sistema de Gestion de Citas",
+  "private": true,
+  "scripts": {
+    "dev": "npx wrangler pages dev . --port 3001",
+    "deploy": "npx wrangler pages deploy . --project-name sgc-admin"
+  }
+}

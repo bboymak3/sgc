@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ordenes Bot IA — GlobalPro Citas</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Segoe UI',system-ui,-apple-system,sans-serif;background:#0a0f1a;color:#e0e0e0;min-height:100vh}
+.header{background:linear-gradient(135deg,#16a34a,#15803d);padding:20px 30px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px}
+.header h1{color:#fff;font-size:22px;font-weight:700}
+.header a{color:#fff;text-decoration:none;background:rgba(255,255,255,.15);padding:8px 16px;border-radius:8px;font-size:14px;transition:.2s}
+.header a:hover{background:rgba(255,255,255,.25)}
+.header a.active{background:rgba(255,255,255,.35);font-weight:700}
+.container{max-width:1200px;margin:0 auto;padding:24px 20px}
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:14px;margin-bottom:24px}
+.stat-card{background:#141b2d;border:1px solid #1e293b;border-radius:12px;padding:16px;text-align:center;cursor:pointer;transition:.2s}
+.stat-card:hover{border-color:#16a34a;transform:translateY(-2px)}
+.stat-card.active{border-color:#16a34a;box-shadow:0 0 20px #16a34a33}
+.stat-card .num{font-size:28px;font-weight:700}
+.stat-card .label{font-size:13px;color:#8892a4;margin-top:4px}
+.stat-card.pending .num{color:#f59e0b}
+.stat-card.approved .num{color:#16a34a}
+.stat-card.rejected .num{color:#dc2626}
+.stat-card.total .num{color:#60a5fa}
+.toolbar{display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;flex-wrap:wrap;gap:12px}
+.toolbar h2{font-size:18px;color:#fff}
+.btn{padding:10px 20px;border:none;border-radius:8px;cursor:pointer;font-size:14px;font-weight:600;transition:.2s;display:inline-flex;align-items:center;gap:6px}
+.btn-primary{background:#16a34a;color:#fff}.btn-primary:hover{background:#15803d}
+.btn-sm{padding:6px 12px;font-size:12px;border-radius:6px}
+.btn-approve{background:#16a34a;color:#fff}.btn-approve:hover{background:#15803d}
+.btn-reject{background:#dc2626;color:#fff}.btn-reject:hover{background:#b91c1c}
+.btn-disabled{background:#374151;color:#6b7280;cursor:default}
+.orders-list{display:flex;flex-direction:column;gap:12px}
+.order-card{background:#141b2d;border:1px solid #1e293b;border-radius:12px;padding:18px;transition:.2s;position:relative;overflow:hidden}
+.order-card:hover{border-color:#2d3a4f}
+.order-card.approved{border-left:4px solid #16a34a;opacity:.8}
+.order-card.rejected{border-left:4px solid #dc2626;opacity:.8}
+.order-card.pending{border-left:4px solid #f59e0b}
+.order-header{display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:10px;margin-bottom:12px}
+.order-id{font-size:12px;color:#6b7280;background:#1e293b;padding:3px 10px;border-radius:20px}
+.order-date{font-size:12px;color:#6b7280}
+.order-type{display:inline-flex;align-items:center;gap:4px;padding:4px 12px;border-radius:20px;font-size:12px;font-weight:600}
+.order-type.taller{background:#16a34a22;color:#16a34a}
+.order-type.domicilio{background:#2563eb22;color:#60a5fa}
+.order-status{display:inline-flex;align-items:center;gap:4px;padding:4px 12px;border-radius:20px;font-size:12px;font-weight:600}
+.order-status.pendiente{background:#f59e0b22;color:#fbbf24}
+.order-status.aprobada{background:#16a34a22;color:#16a34a}
+.order-status.rechazada{background:#dc262622;color:#f87171}
+.order-body{display:grid;grid-template-columns:1fr 1fr;gap:10px 20px;margin-bottom:14px}
+.order-field{display:flex;gap:6px;font-size:14px}
+.order-field .label{color:#6b7280;min-width:80px;flex-shrink:0}
+.order-field .value{color:#e0e0e0;font-weight:500}
+.order-actions{display:flex;gap:8px;justify-content:flex-end;flex-wrap:wrap;padding-top:10px;border-top:1px solid #1e293b}
+.order-reject-reason{background:#dc262611;border:1px solid #dc262644;border-radius:8px;padding:10px;margin-top:10px;color:#f87171;font-size:13px}
+.empty{text-align:center;padding:60px 20px;color:#6b7280}
+.empty-icon{font-size:48px;margin-bottom:12px}
+.modal-overlay{display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,.6);z-index:1000;justify-content:center;align-items:center}
+.modal-overlay.active{display:flex}
+.modal{background:#1a2332;border:1px solid #1e293b;border-radius:16px;width:95%;max-width:480px;padding:28px}
+.modal h2{color:#fff;font-size:20px;margin-bottom:16px}
+.form-group{margin-bottom:16px}
+.form-group label{display:block;color:#8892a4;font-size:13px;margin-bottom:6px;font-weight:600}
+.form-group textarea{width:100%;background:#0a0f1a;border:1px solid #1e293b;color:#e0e0e0;padding:10px 14px;border-radius:8px;font-size:14px;min-height:80px;resize:vertical}
+.form-group textarea:focus{outline:none;border-color:#dc2626}
+.modal-actions{display:flex;gap:10px;justify-content:flex-end;margin-top:16px}
+.btn-cancel{background:#6b7280;color:#fff}.btn-cancel:hover{background:#4b5563}
+.toast{position:fixed;bottom:20px;right:20px;background:#16a34a;color:#fff;padding:14px 24px;border-radius:10px;font-size:14px;font-weight:600;transform:translateY(100px);opacity:0;transition:.3s;z-index:2000}
+.toast.show{transform:translateY(0);opacity:1}
+.toast.error{background:#dc2626}
+.auto-refresh{display:flex;align-items:center;gap:8px;font-size:13px;color:#6b7280}
+.auto-refresh input[type=checkbox]{accent-color:#16a34a}
+@media(max-width:700px){.order-body{grid-template-columns:1fr}.order-header{flex-direction:column}.header h1{font-size:18px}.stats{grid-template-columns:1fr 1fr}}
+</style>
+</head>
+<body>
+<div class="header">
+  <h1>Ordenes del Bot IA</h1>
+  <div style="display:flex;gap:10px">
+    <a href="/">Chat</a>
+    <a href="/admin">Servicios</a>
+    <a href="/ordenes" class="active">Ordenes</a>
+  </div>
+</div>
+<div class="container">
+  <div class="stats" id="stats"></div>
+  <div class="toolbar">
+    <h2 id="filterTitle">Todas las ordenes</h2>
+    <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap">
+      <label class="auto-refresh"><input type="checkbox" id="autoRefresh" checked onchange="toggleAutoRefresh()">Auto-refresh 30s</label>
+      <button class="btn btn-primary btn-sm" onclick="loadOrdenes()">Actualizar</button>
+    </div>
+  </div>
+  <div id="ordersContainer" class="orders-list"></div>
+</div>
+<div class="modal-overlay" id="rejectModal" onclick="if(event.target===this)closeRejectModal()">
+  <div class="modal">
+    <h2>Rechazar Cita</h2>
+    <p style="color:#8892a4;font-size:14px;margin-bottom:16px">Se enviara WhatsApp al cliente informando el rechazo.</p>
+    <div class="form-group">
+      <label>Motivo del rechazo (opcional)</label>
+      <textarea id="rejectMotivo" placeholder="Ej: Horario no disponible"></textarea>
+    </div>
+    <input type="hidden" id="rejectId">
+    <div class="modal-actions">
+      <button class="btn btn-cancel" onclick="closeRejectModal()">Cancelar</button>
+      <button class="btn btn-reject" onclick="confirmReject()">Rechazar y enviar WhatsApp</button>
+    </div>
+  </div>
+</div>
+<div class="toast" id="toast"></div>
+<script>
+var API = '/api/citas-admin';
+var currentFilter = '';
+var autoRefreshInterval = null;
+
+function toggleAutoRefresh() {
+  if (document.getElementById('autoRefresh').checked) { startAutoRefresh(); }
+  else { stopAutoRefresh(); }
+}
+function startAutoRefresh() {
+  stopAutoRefresh();
+  autoRefreshInterval = setInterval(loadOrdenes, 30000);
+}
+function stopAutoRefresh() {
+  if (autoRefreshInterval) clearInterval(autoRefreshInterval);
+  autoRefreshInterval = null;
+}
+
+async function loadOrdenes(filter) {
+  if (filter !== undefined) currentFilter = filter;
+  var titles = {'':'Todas las ordenes','pendiente':'Pendientes de aprobacion','aprobada':'Aprobadas','rechazada':'Rechazadas'};
+  document.getElementById('filterTitle').textContent = titles[currentFilter] || titles[''];
+  try {
+    var url = API + (currentFilter ? '?estado=' + currentFilter : '');
+    var res = await fetch(url);
+    var data = await res.json();
+    if (!data.success) return;
+    renderStats(data.stats);
+    renderOrders(data.citas || []);
+  } catch (err) {
+    document.getElementById('ordersContainer').innerHTML = '<div class="empty">Error al cargar ordenes</div>';
+  }
+}
+
+function renderStats(stats) {
+  var h = '<div class="stat-card total ' + (!currentFilter ? 'active' : '') + '" onclick="loadOrdenes(\'\')"><div class="num">' + stats.total + '</div><div class="label">Total</div></div>';
+  h += '<div class="stat-card pending ' + (currentFilter==='pendiente' ? 'active' : '') + '" onclick="loadOrdenes(\'pendiente\')"><div class="num">' + stats.pendientes + '</div><div class="label">Pendientes</div></div>';
+  h += '<div class="stat-card approved ' + (currentFilter==='aprobada' ? 'active' : '') + '" onclick="loadOrdenes(\'aprobada\')"><div class="num">' + stats.aprobadas + '</div><div class="label">Aprobadas</div></div>';
+  h += '<div class="stat-card rejected ' + (currentFilter==='rechazada' ? 'active' : '') + '" onclick="loadOrdenes(\'rechazada\')"><div class="num">' + stats.rechazadas + '</div><div class="label">Rechazadas</div></div>';
+  document.getElementById('stats').innerHTML = h;
+}
+
+function fmtDate(s) {
+  if (!s) return '--';
+  var d = new Date(s + 'T12:00:00');
+  var dias = ['dom','lun','mar','mie','jue','vie','sab'];
+  var meses = ['ene','feb','mar','abr','may','jun','jul','ago','sep','oct','nov','dic'];
+  return dias[d.getDay()] + ' ' + d.getDate() + '-' + meses[d.getMonth()] + '-' + d.getFullYear();
+}
+
+function renderOrders(citas) {
+  var container = document.getElementById('ordersContainer');
+  if (!citas.length) {
+    container.innerHTML = '<div class="empty"><div class="empty-icon">📭</div><p>No hay ordenes del bot IA</p></div>';
+    return;
+  }
+  var html = '';
+  for (var i = 0; i < citas.length; i++) {
+    var c = citas[i];
+    var estado = c.estado_aprobacion || 'pendiente';
+    var tipo = c.tipo_atencion || 'taller';
+    var vehiculo = [c.marca, c.modelo, c.anio, c.color ? '(' + c.color + ')' : ''].filter(Boolean).join(' ');
+    var ordenNum = c.numero_orden_sgc ? 'EXP' + String(c.numero_orden_sgc).padStart(6, '0') : '--';
+    var tipoLabel = tipo === 'domicilio' ? '🏠 Domicilio' : '🔧 Taller';
+    var estadoLabel = estado === 'pendiente' ? '⏳ Pendiente' : estado === 'aprobada' ? '✅ Aprobada' : '❌ Rechazada';
+    var fechaCita = fmtDate(c.fecha_cita) + ' ' + (c.hora_cita || '');
+    var creada = c.created_at ? c.created_at.substring(0, 16) : '--';
+
+    html += '<div class="order-card ' + estado + '">';
+    html += '<div class="order-header"><div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center">';
+    html += '<span class="order-id">#' + c.id + '</span>';
+    html += '<span class="order-type ' + tipo + '">' + tipoLabel + '</span>';
+    html += '<span class="order-status ' + estado + '">' + estadoLabel + '</span>';
+    html += '</div><div class="order-date">' + fechaCita + ' | Creada: ' + creada + '</div></div>';
+
+    html += '<div class="order-body">';
+    html += '<div class="order-field"><span class="label">Cliente:</span><span class="value">' + (c.nombre_cliente || '--') + '</span></div>';
+    html += '<div class="order-field"><span class="label">Telefono:</span><span class="value">' + (c.telefono || '--') + '</span></div>';
+    html += '<div class="order-field"><span class="label">Patente:</span><span class="value">' + (c.patente || '--') + '</span></div>';
+    html += '<div class="order-field"><span class="label">Vehiculo:</span><span class="value">' + (vehiculo || '--') + '</span></div>';
+    html += '<div class="order-field"><span class="label">Servicio:</span><span class="value">' + (c.servicio || '--') + '</span></div>';
+    html += '<div class="order-field"><span class="label">Orden:</span><span class="value">' + ordenNum + '</span></div>';
+    if (c.direccion) html += '<div class="order-field"><span class="label">Direccion:</span><span class="value">' + c.direccion + '</span></div>';
+    if (c.referencia_direccion) html += '<div class="order-field"><span class="label">Referencia:</span><span class="value">' + c.referencia_direccion + '</span></div>';
+    if (c.observaciones) html += '<div class="order-field" style="grid-column:1/-1"><span class="label">Obs:</span><span class="value">' + c.observaciones + '</span></div>';
+    html += '</div>';
+
+    if (c.motivo_rechazo) html += '<div class="order-reject-reason">Motivo: ' + c.motivo_rechazo + '</div>';
+
+    html += '<div class="order-actions">';
+    if (estado === 'pendiente') {
+      html += '<button class="btn btn-sm btn-approve" onclick="aprobarCita(' + c.id + ')">✅ Aprobar</button>';
+      html += '<button class="btn btn-sm btn-reject" onclick="openRejectModal(' + c.id + ')">❌ Rechazar</button>';
+    } else if (estado === 'aprobada') {
+      html += '<button class="btn btn-sm btn-disabled">✅ Aprobada</button>';
+    } else {
+      html += '<button class="btn btn-sm btn-disabled">❌ Rechazada</button>';
+    }
+    html += '</div></div>';
+  }
+  container.innerHTML = html;
+}
+
+async function aprobarCita(id) {
+  if (!confirm('Aprueba esta cita? Se enviara WhatsApp de confirmacion al cliente.')) return;
+  try {
+    var res = await fetch(API + '/' + id + '/aprobar', { method: 'POST' });
+    var data = await res.json();
+    if (data.success) { showToast('Cita aprobada y WhatsApp enviado'); loadOrdenes(); }
+    else { showToast('Error: ' + (data.error || 'No se pudo aprobar'), true); }
+  } catch (err) { showToast('Error de conexion', true); }
+}
+
+function openRejectModal(id) {
+  document.getElementById('rejectId').value = id;
+  document.getElementById('rejectMotivo').value = '';
+  document.getElementById('rejectModal').classList.add('active');
+}
+function closeRejectModal() {
+  document.getElementById('rejectModal').classList.remove('active');
+}
+
+async function confirmReject() {
+  var id = document.getElementById('rejectId').value;
+  var motivo = document.getElementById('rejectMotivo').value.trim();
+  closeRejectModal();
+  try {
+    var res = await fetch(API + '/' + id + '/rechazar', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ motivo: motivo })
+    });
+    var data = await res.json();
+    if (data.success) { showToast('Cita rechazada y WhatsApp enviado al cliente'); loadOrdenes(); }
+    else { showToast('Error: ' + (data.error || 'No se pudo rechazar'), true); }
+  } catch (err) { showToast('Error de conexion', true); }
+}
+
+function showToast(msg, isError) {
+  var t = document.getElementById('toast');
+  t.textContent = msg;
+  t.className = 'toast' + (isError ? ' error' : '');
+  setTimeout(function() { t.classList.add('show'); }, 10);
+  setTimeout(function() { t.classList.remove('show'); }, 3500);
+}
+
+loadOrdenes();
+startAutoRefresh();
+</script>
+</body>
+</html>

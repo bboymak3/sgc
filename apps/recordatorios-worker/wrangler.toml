@@ -1,0 +1,25 @@
+name = "sgc-recordatorios"
+main = "src/index.ts"
+compatibility_date = "2024-01-01"
+
+# ============================================================
+# D1 Database Binding - Base de datos de ordenes (lectura)
+# ============================================================
+[[d1_databases]]
+binding = "DB"
+database_name = "sgc_recordatorios_db"
+database_id = "c3a773f0-9411-4a20-a030-de22523104fd"
+
+# ============================================================
+# Cron Trigger - Todos los dias a las 09:00 AM Chile
+# UTC 13:00 = Chile 09:00 (invierno UTC-4)
+# ============================================================
+[triggers]
+crons = ["0 13 * * *"]
+
+# ============================================================
+# Variables de entorno
+# ============================================================
+[vars]
+ULTRAMSG_INSTANCE = "instance170592"
+CRON_SECRET = "cambia-esto-por-una-clave-secreta"

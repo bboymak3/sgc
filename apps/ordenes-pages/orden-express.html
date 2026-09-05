@@ -1,0 +1,752 @@
+<!DOCTYPE html>
+<html lang="es-CL">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Global Pro Automotriz - Orden Express</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Leaflet CSS (mapa para seleccionar ubicacion) -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <style>
+        :root {
+            --gp-red: #a80000;
+            --gp-orange: #ff6b00;
+            --gp-dark: #121212;
+        }
+
+        * { box-sizing: border-box; }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            margin: 0;
+        }
+
+        .express-container {
+            max-width: 480px;
+            width: 100%;
+        }
+
+        .express-card {
+            background: #fff;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            overflow: hidden;
+        }
+
+        .express-header {
+            background: linear-gradient(135deg, #ff6b00 0%, #ff8c33 50%, #ffaa55 100%);
+            padding: 30px 25px 20px;
+            text-align: center;
+            position: relative;
+        }
+
+        .express-header .logo-icon {
+            width: 70px;
+            height: 70px;
+            background: rgba(255,255,255,0.2);
+            border-radius: 50%;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 12px;
+            backdrop-filter: blur(10px);
+            border: 2px solid rgba(255,255,255,0.3);
+        }
+
+        .express-header .logo-icon i {
+            font-size: 1.8rem;
+            color: #fff;
+        }
+
+        .express-header h1 {
+            color: #fff;
+            font-weight: 900;
+            font-size: 1.4rem;
+            margin-bottom: 4px;
+            letter-spacing: 0.03em;
+        }
+
+        .express-header p {
+            color: rgba(255,255,255,0.85);
+            font-size: 0.85rem;
+            margin-bottom: 0;
+        }
+
+        .express-body {
+            padding: 25px;
+        }
+
+        .express-body .form-label {
+            font-weight: 700;
+            color: #333;
+            font-size: 0.85rem;
+            margin-bottom: 4px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .express-body .form-label i {
+            color: var(--gp-orange);
+            font-size: 0.8rem;
+        }
+
+        .express-body .form-control {
+            border: 2px solid #ddd;
+            border-radius: 10px;
+            padding: 12px 14px;
+            font-size: 0.95rem;
+            font-weight: 500;
+            transition: border-color 0.2s, box-shadow 0.2s;
+        }
+
+        .express-body .form-control:focus {
+            border-color: var(--gp-orange);
+            box-shadow: 0 0 0 3px rgba(255,107,0,0.15);
+        }
+
+        .patente-public {
+            font-size: 1.6rem;
+            font-weight: 800;
+            text-align: center;
+            text-transform: uppercase;
+            letter-spacing: 4px;
+            border: 3px solid var(--gp-orange) !important;
+            border-radius: 12px !important;
+            padding: 14px !important;
+            background: #fffbf5 !important;
+        }
+
+        .patente-public:focus {
+            border-color: var(--gp-red) !important;
+            box-shadow: 0 0 0 4px rgba(168,0,0,0.15) !important;
+            background: #fff !important;
+        }
+
+        .patente-public::placeholder {
+            font-size: 1rem;
+            letter-spacing: 1px;
+            color: #bbb;
+        }
+
+        textarea.form-control {
+            resize: vertical;
+            min-height: 100px;
+        }
+
+        .btn-express-submit {
+            background: linear-gradient(135deg, #ff6b00, #ff8c33);
+            color: #fff;
+            border: none;
+            border-radius: 12px;
+            padding: 14px;
+            font-size: 1.05rem;
+            font-weight: 800;
+            letter-spacing: 0.04em;
+            text-transform: uppercase;
+            width: 100%;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 6px 20px rgba(255,107,0,0.35);
+        }
+
+        .btn-express-submit:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px rgba(255,107,0,0.45);
+            background: linear-gradient(135deg, #e05f00, #ff6b00);
+        }
+
+        .btn-express-submit:active:not(:disabled) {
+            transform: translateY(0);
+        }
+
+        .btn-express-submit:disabled {
+            opacity: 0.7;
+            cursor: not-allowed;
+        }
+
+        .express-footer {
+            text-align: center;
+            padding: 15px 25px 20px;
+            color: #999;
+            font-size: 0.75rem;
+        }
+
+        .success-overlay {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(0,0,0,0.5);
+            z-index: 100;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .success-overlay.show {
+            display: flex;
+        }
+
+        .success-card {
+            background: #fff;
+            border-radius: 20px;
+            padding: 40px 30px;
+            text-align: center;
+            max-width: 400px;
+            width: 100%;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            animation: slideUp 0.4s ease;
+        }
+
+        @keyframes slideUp {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .success-card .success-icon {
+            width: 80px;
+            height: 80px;
+            background: linear-gradient(135deg, #28a745, #20c997);
+            border-radius: 50%;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 20px;
+        }
+
+        .success-card .success-icon i {
+            font-size: 2.5rem;
+            color: #fff;
+        }
+
+        .success-card h2 {
+            color: #28a745;
+            font-weight: 800;
+            font-size: 1.3rem;
+            margin-bottom: 8px;
+        }
+
+        .success-card .orden-numero {
+            font-size: 2rem;
+            font-weight: 900;
+            color: var(--gp-orange);
+            background: #fff5eb;
+            border: 2px solid var(--gp-orange);
+            border-radius: 12px;
+            padding: 12px 20px;
+            display: inline-block;
+            margin: 15px 0;
+        }
+
+        .success-card p {
+            color: #666;
+            font-size: 0.9rem;
+            margin-bottom: 5px;
+        }
+
+        .success-card .btn-nueva {
+            background: linear-gradient(135deg, #ff6b00, #ff8c33);
+            color: #fff;
+            border: none;
+            border-radius: 10px;
+            padding: 10px 28px;
+            font-weight: 700;
+            font-size: 0.9rem;
+            cursor: pointer;
+            margin-top: 15px;
+            transition: all 0.2s;
+        }
+
+        .success-card .btn-nueva:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 5px 15px rgba(255,107,0,0.3);
+        }
+
+        .error-msg {
+            display: none;
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+            border-radius: 10px;
+            padding: 10px 14px;
+            font-size: 0.85rem;
+            font-weight: 500;
+            margin-bottom: 15px;
+        }
+
+        .error-msg.show {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        /* ========== MAPA PICKER ========== */
+        .mapa-toggle-btn {
+            background: linear-gradient(135deg, #198754, #20c997);
+            color: #fff;
+            border: none;
+            border-radius: 10px;
+            padding: 10px 16px;
+            font-size: 0.85rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            margin-top: 6px;
+        }
+        .mapa-toggle-btn:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(25, 135, 84, 0.35);
+        }
+        .mapa-toggle-btn.active {
+            background: linear-gradient(135deg, #dc3545, #e74c5a);
+        }
+        .mapa-container-wrapper {
+            display: none;
+            margin-top: 10px;
+            border-radius: 12px;
+            overflow: hidden;
+            border: 2px solid #198754;
+            animation: fadeIn 0.3s ease;
+        }
+        .mapa-container-wrapper.show {
+            display: block;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-8px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .mapa-hint {
+            background: #f0fff4;
+            border-bottom: 1px solid #c3e6cb;
+            padding: 8px 12px;
+            font-size: 0.78rem;
+            color: #155724;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        #pub-mapa-container {
+            height: 280px;
+            width: 100%;
+        }
+        .mapa-preview-bar {
+            background: #fff;
+            padding: 8px 12px;
+            border-top: 1px solid #e0e0e0;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 0.78rem;
+        }
+        .mapa-preview-bar i { color: #198754; }
+        .mapa-coords-badge {
+            display: none;
+            background: #e8f5e9;
+            border: 1px solid #a5d6a7;
+            color: #2e7d32;
+            border-radius: 8px;
+            padding: 6px 10px;
+            font-size: 0.78rem;
+            margin-top: 8px;
+            align-items: center;
+            gap: 6px;
+        }
+        .mapa-coords-badge.show { display: inline-flex; }
+
+        @media (max-width: 480px) {
+            body { padding: 10px; }
+            .express-header { padding: 20px 18px 15px; }
+            .express-body { padding: 18px; }
+            .patente-public { font-size: 1.3rem; letter-spacing: 3px; }
+            #pub-mapa-container { height: 220px; }
+        }
+    </style>
+</head>
+<body>
+    <div class="express-container" id="form-container">
+        <div class="express-card">
+            <div class="express-header">
+                <div class="logo-icon">
+                    <i class="fas fa-bolt"></i>
+                </div>
+                <h1>GLOBAL PRO AUTOMOTRIZ</h1>
+                <p><i class="fas fa-bolt me-1"></i>Solicitar Orden Express</p>
+            </div>
+
+            <div class="express-body">
+                <div class="error-msg" id="error-msg">
+                    <i class="fas fa-exclamation-circle"></i>
+                    <span id="error-text"></span>
+                </div>
+
+                <form id="form-express-public" onsubmit="enviarOrdenExpress(event)">
+                    <div class="mb-3">
+                        <label class="form-label" for="pub-patente">
+                            <i class="fas fa-car"></i> Patente / Placa
+                        </label>
+                        <input type="text" class="form-control patente-public" id="pub-patente"
+                               placeholder="ABCD12" maxlength="8" required
+                               autocomplete="off" autocapitalize="characters">
+                    </div>
+
+                    <div class="row g-3 mb-3">
+                        <div class="col-6">
+                            <label class="form-label" for="pub-marca">
+                                <i class="fas fa-industry"></i> Marca
+                            </label>
+                            <input type="text" class="form-control" id="pub-marca"
+                                   placeholder="Toyota, Ford...">
+                        </div>
+                        <div class="col-6">
+                            <label class="form-label" for="pub-modelo">
+                                <i class="fas fa-car-side"></i> Modelo
+                            </label>
+                            <input type="text" class="form-control" id="pub-modelo"
+                                   placeholder="Corolla, Focus...">
+                        </div>
+                    </div>
+
+                    <div class="row mb-3">
+                        <div class="col-6">
+                            <label class="form-label" for="pub-color">
+                                <i class="fas fa-palette"></i> Color
+                            </label>
+                            <div class="input-group">
+                                <input type="color" class="form-control form-control-color" id="pub-color-picker" title="Seleccionar color">
+                                <input type="text" class="form-control" id="pub-color" placeholder="Rojo, Azul...">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label" for="pub-nombre">
+                            <i class="fas fa-user"></i> Nombre
+                        </label>
+                        <input type="text" class="form-control" id="pub-nombre"
+                               placeholder="Tu nombre completo" required>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label" for="pub-telefono">
+                            <i class="fas fa-phone"></i> Telefono
+                        </label>
+                        <input type="tel" class="form-control" id="pub-telefono"
+                               placeholder="+56 9 1234 5678" required>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label" for="pub-direccion">
+                            <i class="fas fa-map-marker-alt"></i> Direccion del servicio
+                        </label>
+                        <div class="d-flex align-items-start gap-2">
+                            <input type="text" class="form-control" id="pub-direccion"
+                                   placeholder="Calle, numero, comuna, ciudad" required style="flex:1;">
+                            <button type="button" class="mapa-toggle-btn" id="btn-toggle-mapa" onclick="toggleMapaPublic()">
+                                <i class="fas fa-map"></i> Mapa
+                            </button>
+                        </div>
+                        <small class="text-muted">Ej: Av Providencia 1234, Providencia, Santiago</small>
+
+                        <!-- Mapa picker (colapsable) -->
+                        <div class="mapa-container-wrapper" id="pub-mapa-wrapper">
+                            <div class="mapa-hint">
+                                <i class="fas fa-mouse-pointer"></i>
+                                Haz click en el mapa para seleccionar la ubicacion. La direccion se completara automaticamente.
+                            </div>
+                            <div id="pub-mapa-container"></div>
+                            <div class="mapa-preview-bar">
+                                <i class="fas fa-map-pin"></i>
+                                <strong>Direccion:</strong>
+                                <span id="pub-mapa-direccion-preview" class="text-muted" style="flex:1;">Esperando seleccion...</span>
+                            </div>
+                        </div>
+
+                        <!-- Badge coordenadas guardadas -->
+                        <div class="mapa-coords-badge" id="pub-coordenadas-badge">
+                            <i class="fas fa-check-circle"></i>
+                            <span id="pub-coordenadas-text">Ubicacion guardada</span>
+                        </div>
+
+                        <!-- Hidden fields para coordenadas -->
+                        <input type="hidden" id="pub-cliente-lat" value="0">
+                        <input type="hidden" id="pub-cliente-lng" value="0">
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label" for="pub-referencia">
+                            <i class="fas fa-sign"></i> Referencia (opcional)
+                        </label>
+                        <input type="text" class="form-control" id="pub-referencia"
+                               placeholder="Depto, casa, local, punto de referencia...">
+                    </div>
+
+                    <div class="mb-4">
+                        <label class="form-label" for="pub-observaciones">
+                            <i class="fas fa-clipboard"></i> Requerimientos
+                        </label>
+                        <textarea class="form-control" id="pub-observaciones"
+                                  placeholder="Describe el problema o servicio que necesitas..."></textarea>
+                    </div>
+
+                    <button type="submit" class="btn-express-submit" id="btn-enviar">
+                        <i class="fas fa-bolt me-2"></i>Solicitar Orden Express
+                    </button>
+                </form>
+            </div>
+
+            <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
+            <div class="express-footer">
+                Global Pro Automotriz &bull; Atencion Express<br>
+                Tu orden sera aprobada automaticamente
+            </div>
+        </div>
+    </div>
+
+    <div class="success-overlay" id="success-overlay">
+        <div class="success-card">
+            <div class="success-icon">
+                <i class="fas fa-check"></i>
+            </div>
+            <h2>Orden Creada</h2>
+            <p>Tu orden express ha sido registrada y aprobada</p>
+            <div class="orden-numero" id="success-orden-num">EXP000000</div>
+            <p>Nos comunicaremos contigo a la brevedad</p>
+            <button class="btn-nueva" onclick="crearOtraOrden()">
+                <i class="fas fa-plus me-1"></i>Crear otra orden
+            </button>
+        </div>
+    </div>
+
+    <script>
+        // ============================================
+        // ORDEN EXPRESS - URL absoluta para funcionar
+        // desde cualquier dominio (mecanico247, etc.)
+        // ============================================
+
+        const API_BASE = 'https://sgc-ordenes.pages.dev/api';
+
+        // ============================================
+        // MAPA PICKER (Leaflet + Nominatim)
+        // ============================================
+        let mapaPublic = null;
+        let markerPublic = null;
+        let _pubMapaLat = 0;
+        let _pubMapaLng = 0;
+        let mapaVisible = false;
+
+        function toggleMapaPublic() {
+            const wrapper = document.getElementById('pub-mapa-wrapper');
+            const btn = document.getElementById('btn-toggle-mapa');
+
+            if (mapaVisible) {
+                wrapper.classList.remove('show');
+                btn.classList.remove('active');
+                btn.innerHTML = '<i class="fas fa-map"></i> Mapa';
+                mapaVisible = false;
+                return;
+            }
+
+            wrapper.classList.add('show');
+            btn.classList.add('active');
+            btn.innerHTML = '<i class="fas fa-times"></i> Cerrar';
+            mapaVisible = true;
+
+            setTimeout(() => {
+                if (mapaPublic) {
+                    mapaPublic.invalidateSize();
+                    return;
+                }
+                // Centro: Santiago, Chile
+                mapaPublic = L.map('pub-mapa-container').setView([-33.4489, -70.6693], 12);
+                L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                    attribution: '&copy; OpenStreetMap',
+                    maxZoom: 19
+                }).addTo(mapaPublic);
+
+                mapaPublic.on('click', function(e) {
+                    const lat = e.latlng.lat;
+                    const lng = e.latlng.lng;
+                    _pubMapaLat = lat;
+                    _pubMapaLng = lng;
+
+                    if (markerPublic) {
+                        markerPublic.setLatLng([lat, lng]);
+                    } else {
+                        const greenIcon = L.icon({
+                            iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-green.png',
+                            shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/images/marker-shadow.png',
+                            iconSize: [25, 41],
+                            iconAnchor: [12, 41],
+                            popupAnchor: [1, -34],
+                            shadowSize: [41, 41]
+                        });
+                        markerPublic = L.marker([lat, lng], { icon: greenIcon }).addTo(mapaPublic);
+                    }
+                    markerPublic.bindPopup('<b>Ubicacion seleccionada</b><br>Obteniendo direccion...').openPopup();
+
+                    document.getElementById('pub-mapa-direccion-preview').textContent = 'Detectando direccion...';
+                    fetch('https://nominatim.openstreetmap.org/reverse?lat=' + lat + '&lon=' + lng + '&format=json&accept-language=es', {
+                        headers: { 'User-Agent': 'GlobalProAutomotriz/1.0' }
+                    })
+                    .then(function(r) { return r.json(); })
+                    .then(function(data) {
+                        let direccion = '';
+                        if (data && data.display_name) {
+                            const parts = [];
+                            if (data.address) {
+                                if (data.address.road) parts.push(data.address.road);
+                                if (data.address.house_number) parts.push(data.address.house_number);
+                                if (data.address.suburb) parts.push(data.address.suburb);
+                                if (data.address.city || data.address.town) parts.push(data.address.city || data.address.town);
+                                if (data.address.state) parts.push(data.address.state);
+                            }
+                            if (parts.length > 0) {
+                                direccion = parts.join(', ');
+                            } else {
+                                direccion = data.display_name.split(',').slice(0, 3).join(', ');
+                            }
+                        } else {
+                            direccion = lat.toFixed(6) + ', ' + lng.toFixed(6);
+                        }
+                        document.getElementById('pub-mapa-direccion-preview').textContent = direccion;
+                        if (markerPublic) markerPublic.setPopupContent('<b>Ubicacion</b><br>' + direccion);
+
+                        // Auto-llenar campo direccion
+                        document.getElementById('pub-direccion').value = direccion;
+                        document.getElementById('pub-cliente-lat').value = lat;
+                        document.getElementById('pub-cliente-lng').value = lng;
+
+                        // Mostrar badge coordenadas
+                        const badge = document.getElementById('pub-coordenadas-badge');
+                        badge.classList.add('show');
+                        document.getElementById('pub-coordenadas-text').textContent = 'Ubicacion guardada (' + lat.toFixed(4) + ', ' + lng.toFixed(4) + ')';
+                    })
+                    .catch(function() {
+                        document.getElementById('pub-mapa-direccion-preview').textContent = lat.toFixed(6) + ', ' + lng.toFixed(6) + ' (sin direccion detectada)';
+                        document.getElementById('pub-direccion').value = lat.toFixed(6) + ', ' + lng.toFixed(6);
+                        document.getElementById('pub-cliente-lat').value = lat;
+                        document.getElementById('pub-cliente-lng').value = lng;
+                    });
+                });
+            }, 200);
+        }
+
+        document.getElementById('pub-patente').addEventListener('input', function(e) {
+            e.target.value = e.target.value.toUpperCase().replace(/\s/g, '');
+        });
+
+        async function enviarOrdenExpress(event) {
+            event.preventDefault();
+
+            const patente = document.getElementById('pub-patente').value.trim().toUpperCase();
+            const marca = document.getElementById('pub-marca').value.trim();
+            const modelo = document.getElementById('pub-modelo').value.trim();
+            const nombre = document.getElementById('pub-nombre').value.trim();
+            const telefono = document.getElementById('pub-telefono').value.trim();
+            const direccion = document.getElementById('pub-direccion').value.trim();
+            const referencia = document.getElementById('pub-referencia').value.trim();
+            const observaciones = document.getElementById('pub-observaciones').value.trim();
+            const clienteLat = parseFloat(document.getElementById('pub-cliente-lat').value) || 0;
+            const clienteLng = parseFloat(document.getElementById('pub-cliente-lng').value) || 0;
+
+            if (!patente) { mostrarError('Ingresa la patente o placa'); return; }
+            if (!nombre) { mostrarError('Ingresa tu nombre'); return; }
+            if (!telefono) { mostrarError('Ingresa tu telefono'); return; }
+            if (!direccion) { mostrarError('Ingresa la direccion del servicio'); return; }
+
+            const btn = document.getElementById('btn-enviar');
+            btn.disabled = true;
+            btn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Enviando...';
+            ocultarError();
+
+            try {
+                const response = await fetch(API_BASE + '/public/crear-orden-express', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        patente: patente,
+                        marca: marca,
+                        modelo: modelo,
+                        color: document.getElementById('pub-color').value.trim() || null,
+                        cliente: nombre,
+                        telefono: telefono,
+                        direccion: direccion,
+                        referencia_direccion: referencia,
+                        notas_diagnostico: observaciones,
+                        express: true,
+                        fecha_ingreso: new Date(Date.now() - 3 * 60 * 60 * 1000).toISOString().split('T')[0],
+                        cliente_lat: clienteLat,
+                        cliente_lng: clienteLng
+                    })
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    const numEXP = 'EXP' + String(data.numero_orden).padStart(6, '0');
+                    document.getElementById('success-orden-num').textContent = numEXP;
+                    document.getElementById('success-overlay').classList.add('show');
+                } else {
+                    mostrarError(data.error || 'No se pudo crear la orden. Intenta de nuevo.');
+                }
+            } catch (e) {
+                mostrarError('Error de conexion. Verifica tu internet e intenta de nuevo.');
+            } finally {
+                btn.disabled = false;
+                btn.innerHTML = '<i class="fas fa-bolt me-2"></i>Solicitar Orden Express';
+            }
+        }
+
+        function mostrarError(mensaje) {
+            const errorDiv = document.getElementById('error-msg');
+            const errorText = document.getElementById('error-text');
+            errorText.textContent = mensaje;
+            errorDiv.classList.add('show');
+        }
+
+        function ocultarError() {
+            document.getElementById('error-msg').classList.remove('show');
+        }
+
+        function crearOtraOrden() {
+            document.getElementById('success-overlay').classList.remove('show');
+            document.getElementById('pub-patente').value = '';
+            document.getElementById('pub-marca').value = '';
+            document.getElementById('pub-modelo').value = '';
+            document.getElementById('pub-nombre').value = '';
+            document.getElementById('pub-telefono').value = '';
+            document.getElementById('pub-direccion').value = '';
+            document.getElementById('pub-referencia').value = '';
+            document.getElementById('pub-observaciones').value = '';
+            document.getElementById('pub-cliente-lat').value = '0';
+            document.getElementById('pub-cliente-lng').value = '0';
+            document.getElementById('pub-coordenadas-badge').classList.remove('show');
+            document.getElementById('pub-mapa-direccion-preview').textContent = 'Esperando seleccion...';
+            // Reset marker
+            _pubMapaLat = 0;
+            _pubMapaLng = 0;
+            if (markerPublic && mapaPublic) {
+                mapaPublic.removeLayer(markerPublic);
+                markerPublic = null;
+            }
+            document.getElementById('pub-patente').focus();
+        }
+
+        // Sync color picker with text input
+        document.getElementById('pub-color-picker').addEventListener('input', function() {
+            document.getElementById('pub-color').value = this.value;
+        });
+    </script>
+</body>
+</html>

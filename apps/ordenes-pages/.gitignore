@@ -1,0 +1,93 @@
+# dependencies
+node_modules
+/.pnp
+.pnp.*
+.yarn/*
+!.yarn/patches
+!.yarn/plugins
+!.yarn/releases
+!.yarn/versions
+
+# testing
+/coverage
+
+# next.js (not used - app is vanilla JS + Bootstrap)
+/.next/
+/out/
+/src/
+next.config.ts
+tailwind.config.ts
+postcss.config.mjs
+tsconfig.json
+components.json
+bun.lock
+eslint.config.mjs
+
+# production
+/build
+
+# misc
+.DS_Store
+*.pem
+Caddyfile
+*.bak
+
+# debug
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.pnpm-debug.log*
+server.log
+dev.log
+
+# env files
+.env*
+
+# vercel
+.vercel
+
+# typescript
+*.tsbuildinfo
+next-env.d.ts
+local-*
+
+# AI/dev tooling (not part of mechanic app)
+/skills/
+.claude
+.z-ai-config
+.zscripts/
+test
+prompt
+worklog.md
+
+# Analysis artifacts
+*_analysis.json
+*_page.json
+
+# Submodule directories
+Globalpro/
+Globalprov2/
+globalpro_repo/
+globalprov2/
+globalprov3/
+globalprov3_repo/
+llm-chat-fix/
+globalpro
+
+# SQLite local DB (app uses Cloudflare D1)
+/db/
+*.db
+
+# SQL migration files (already applied)
+basedatatotal.sql
+migracion-*.sql
+agregar-*.sql
+recrear-tablas-completo.sql
+
+# Template files
+prisma/
+examples/
+download/
+
+# Images at root are needed for Cloudflare Pages to serve them at /banner.jpeg and /corto.jpg
+# These must NOT be gitignored - they are referenced by index.html, app.js, and Functions

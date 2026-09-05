@@ -1,0 +1,20 @@
+name = "sgc-ordenes"
+compatibility_date = "2024-01-01"
+
+# ============================================================
+# BINDINGS PARA CLOUDFLARE PAGES - CONFIGURAR DESDE DASHBOARD
+# ============================================================
+# Cloudflare Pages (deploy vía Git) NO maneja bien los bindings
+# desde wrangler.toml. Todos se configuran desde el Dashboard:
+#
+# Workers & Pages > Globalprov2 > Settings > Functions
+#
+# D1 database bindings:
+#   Variable name: DB  |  D1 Database: global-pro-db
+#
+# R2 bucket bindings:
+#   Variable name: FOTOS  |  R2 Bucket: my-emdash-media
+#
+# Environment variables:
+#   ENVIRONMENT = production
+# ============================================================

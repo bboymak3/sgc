@@ -1,0 +1,408 @@
+<!DOCTYPE html>
+<html lang="es-CL">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Express Dashboard - Global Pro Automotriz</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --gp-orange: #ff6b00;
+            --gp-red: #a80000;
+            --gp-dark: #121212;
+        }
+        * { box-sizing: border-box; }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(160deg, #0f0f1a 0%, #1a1a2e 40%, #16213e 100%);
+            min-height: 100vh;
+            margin: 0;
+            color: #e0e0e0;
+        }
+        .dashboard-header {
+            background: linear-gradient(135deg, #ff6b00 0%, #ff8c33 50%, #ffaa55 100%);
+            padding: 20px 0;
+            text-align: center;
+            box-shadow: 0 4px 20px rgba(255,107,0,0.3);
+        }
+        .dashboard-header h1 {
+            color: #fff;
+            font-weight: 900;
+            font-size: 1.5rem;
+            margin: 0;
+            letter-spacing: 0.03em;
+        }
+        .dashboard-header p {
+            color: rgba(255,255,255,0.85);
+            font-size: 0.85rem;
+            margin: 4px 0 0;
+        }
+        .container-main {
+            max-width: 1100px;
+            margin: 0 auto;
+            padding: 25px 15px 40px;
+        }
+
+        /* KPI Cards */
+        .kpi-row {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 12px;
+            margin-bottom: 25px;
+        }
+        .kpi-card {
+            background: rgba(255,255,255,0.06);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 14px;
+            padding: 18px 14px;
+            text-align: center;
+            backdrop-filter: blur(10px);
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+        .kpi-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.3);
+        }
+        .kpi-card .kpi-icon {
+            width: 42px;
+            height: 42px;
+            border-radius: 12px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 8px;
+            font-size: 1.1rem;
+        }
+        .kpi-card .kpi-number {
+            font-size: 1.8rem;
+            font-weight: 900;
+            line-height: 1;
+            margin-bottom: 4px;
+        }
+        .kpi-card .kpi-label {
+            font-size: 0.72rem;
+            color: #999;
+            text-transform: uppercase;
+            letter-spacing: 0.06em;
+            font-weight: 600;
+        }
+        .kpi-total .kpi-icon { background: linear-gradient(135deg, #ff6b00, #ff8c33); color: #fff; }
+        .kpi-total .kpi-number { color: #ff8c33; }
+        .kpi-aprobadas .kpi-icon { background: linear-gradient(135deg, #28a745, #20c997); color: #fff; }
+        .kpi-aprobadas .kpi-number { color: #20c997; }
+        .kpi-proceso .kpi-icon { background: linear-gradient(135deg, #0d6efd, #6610f2); color: #fff; }
+        .kpi-proceso .kpi-number { color: #6610f2; }
+        .kpi-finalizadas .kpi-icon { background: linear-gradient(135deg, #6c757d, #495057); color: #fff; }
+        .kpi-finalizadas .kpi-number { color: #adb5bd; }
+
+        /* Refresh button */
+        .toolbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 16px;
+        }
+        .toolbar h2 {
+            font-size: 1.1rem;
+            font-weight: 800;
+            margin: 0;
+            color: #fff;
+        }
+        .toolbar h2 i { color: var(--gp-orange); margin-right: 8px; }
+        .btn-refresh {
+            background: rgba(255,255,255,0.1);
+            border: 1px solid rgba(255,255,255,0.15);
+            color: #ccc;
+            border-radius: 10px;
+            padding: 8px 18px;
+            font-size: 0.85rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .btn-refresh:hover {
+            background: rgba(255,107,0,0.2);
+            border-color: var(--gp-orange);
+            color: #fff;
+        }
+        .btn-refresh.loading i { animation: spin 1s linear infinite; }
+        @keyframes spin { 100% { transform: rotate(360deg); } }
+
+        /* Table */
+        .table-card {
+            background: rgba(255,255,255,0.04);
+            border: 1px solid rgba(255,255,255,0.08);
+            border-radius: 16px;
+            overflow: hidden;
+        }
+        .table-responsive { overflow-x: auto; }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.88rem;
+        }
+        thead th {
+            background: rgba(255,255,255,0.06);
+            color: #999;
+            font-weight: 700;
+            font-size: 0.72rem;
+            text-transform: uppercase;
+            letter-spacing: 0.06em;
+            padding: 12px 14px;
+            border-bottom: 1px solid rgba(255,255,255,0.08);
+            white-space: nowrap;
+        }
+        tbody td {
+            padding: 12px 14px;
+            border-bottom: 1px solid rgba(255,255,255,0.04);
+            vertical-align: middle;
+        }
+        tbody tr { transition: background 0.15s; }
+        tbody tr:hover { background: rgba(255,255,255,0.04); }
+        .ot-number {
+            font-weight: 900;
+            color: var(--gp-orange);
+            font-size: 0.95rem;
+        }
+        .patente-cell {
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: #fff;
+        }
+        .marca-modelo { color: #bbb; }
+        .cliente-cell { color: #e0e0e0; font-weight: 600; }
+        .telefono-cell { color: #999; font-size: 0.82rem; }
+        .badge-estado {
+            display: inline-block;
+            padding: 3px 10px;
+            border-radius: 20px;
+            font-size: 0.7rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.04em;
+        }
+        .badge-aprobada { background: rgba(40,167,69,0.15); color: #28a745; border: 1px solid rgba(40,167,69,0.3); }
+        .badge-en-sitio { background: rgba(13,110,253,0.15); color: #0d6efd; border: 1px solid rgba(13,110,253,0.3); }
+        .badge-en-progreso { background: rgba(102,16,242,0.15); color: #6610f2; border: 1px solid rgba(102,16,242,0.3); }
+        .badge-completada { background: rgba(32,201,151,0.15); color: #20c997; border: 1px solid rgba(32,201,151,0.3); }
+        .badge-cerrada { background: rgba(108,117,125,0.15); color: #adb5bd; border: 1px solid rgba(108,117,125,0.3); }
+        .badge-pendiente { background: rgba(255,193,7,0.15); color: #ffc107; border: 1px solid rgba(255,193,7,0.3); }
+        .badge-default { background: rgba(255,255,255,0.08); color: #999; border: 1px solid rgba(255,255,255,0.1); }
+        .fecha-cell { color: #888; font-size: 0.8rem; white-space: nowrap; }
+        .obs-cell { color: #777; font-size: 0.78rem; max-width: 180px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+
+        /* Empty state */
+        .empty-state {
+            text-align: center;
+            padding: 50px 20px;
+            color: #666;
+        }
+        .empty-state i { font-size: 3rem; color: var(--gp-orange); opacity: 0.4; margin-bottom: 15px; }
+        .empty-state p { font-size: 0.95rem; }
+
+        /* Auto-refresh indicator */
+        .auto-refresh {
+            text-align: center;
+            padding: 8px;
+            font-size: 0.72rem;
+            color: #555;
+        }
+        .auto-refresh .dot {
+            display: inline-block;
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background: #28a745;
+            margin-right: 5px;
+            animation: blink 2s ease-in-out infinite;
+        }
+        @keyframes blink { 0%,100% { opacity: 1; } 50% { opacity: 0.2; } }
+
+        /* Mobile */
+        @media (max-width: 768px) {
+            .kpi-row { grid-template-columns: repeat(2, 1fr); }
+            .toolbar { flex-direction: column; gap: 10px; align-items: flex-start; }
+            .container-main { padding: 15px 10px 30px; }
+            .dashboard-header h1 { font-size: 1.2rem; }
+            .obs-cell, .fecha-cell { display: none; }
+        }
+        @media (max-width: 480px) {
+            .kpi-row { grid-template-columns: repeat(2, 1fr); gap: 8px; }
+            .kpi-card { padding: 12px 8px; }
+            .kpi-card .kpi-number { font-size: 1.4rem; }
+            .telefono-cell { display: none; }
+        }
+    </style>
+</head>
+<body>
+    <div class="dashboard-header">
+        <h1><i class="fas fa-bolt" style="margin-right:8px;"></i>EXPRESS DASHBOARD</h1>
+        <p>Centro de control de ordenes express &bull; Solo lectura</p>
+    </div>
+
+    <div class="container-main">
+        <!-- KPI Cards -->
+        <div class="kpi-row">
+            <div class="kpi-card kpi-total">
+                <div class="kpi-icon"><i class="fas fa-bolt"></i></div>
+                <div class="kpi-number" id="kpi-total">0</div>
+                <div class="kpi-label">Total Web</div>
+            </div>
+            <div class="kpi-card kpi-aprobadas">
+                <div class="kpi-icon"><i class="fas fa-check-circle"></i></div>
+                <div class="kpi-number" id="kpi-aprobadas">0</div>
+                <div class="kpi-label">Aprobadas</div>
+            </div>
+            <div class="kpi-card kpi-proceso">
+                <div class="kpi-icon"><i class="fas fa-cogs"></i></div>
+                <div class="kpi-number" id="kpi-proceso">0</div>
+                <div class="kpi-label">En Proceso</div>
+            </div>
+            <div class="kpi-card kpi-finalizadas">
+                <div class="kpi-icon"><i class="fas fa-flag-checkered"></i></div>
+                <div class="kpi-number" id="kpi-finalizadas">0</div>
+                <div class="kpi-label">Finalizadas</div>
+            </div>
+        </div>
+
+        <!-- Toolbar -->
+        <div class="toolbar">
+            <h2><i class="fas fa-list"></i>Ordenes desde la Web</h2>
+            <button class="btn-refresh" id="btn-refresh" onclick="cargarOrdenes()">
+                <i class="fas fa-sync-alt"></i> Actualizar
+            </button>
+        </div>
+
+        <!-- Tabla -->
+        <div class="table-card">
+            <div class="table-responsive">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>OT</th>
+                            <th>Patente</th>
+                            <th>Marca / Modelo</th>
+                            <th>Cliente</th>
+                            <th>Telefono</th>
+                            <th>Estado</th>
+                            <th>Fecha</th>
+                            <th>Observaciones</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tabla-body">
+                        <tr>
+                            <td colspan="8">
+                                <div class="empty-state">
+                                    <i class="fas fa-bolt"></i>
+                                    <p>Cargando ordenes...</p>
+                                </div>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <div class="auto-refresh">
+            <span class="dot"></span> Se actualiza automaticamente cada 60 segundos
+        </div>
+    </div>
+
+    <script>
+        const API_URL = '/api/public/listar-ordenes-express';
+
+        function badgeClass(estado) {
+            if (!estado) return 'badge-default';
+            const e = estado.toLowerCase();
+            if (e.includes('aprobad')) return 'badge-aprobada';
+            if (e.includes('sitio')) return 'badge-en-sitio';
+            if (e.includes('progres')) return 'badge-en-progreso';
+            if (e.includes('completad')) return 'badge-completada';
+            if (e.includes('cerrad')) return 'badge-cerrada';
+            if (e.includes('pendien')) return 'badge-pendiente';
+            return 'badge-default';
+        }
+
+        function formatearFecha(fecha) {
+            if (!fecha) return '-';
+            try {
+                const d = new Date(fecha + (fecha.includes('T') || fecha.includes('Z') ? '' : 'T00:00:00'));
+                if (isNaN(d.getTime())) return fecha;
+                return d.toLocaleDateString('es-CL', { day: '2-digit', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' });
+            } catch { return fecha; }
+        }
+
+        function otFormat(num) {
+            if (!num) return '-';
+            return 'EXP' + String(num).padStart(6, '0');
+        }
+
+        async function cargarOrdenes() {
+            const btn = document.getElementById('btn-refresh');
+            btn.classList.add('loading');
+
+            try {
+                const resp = await fetch(API_URL);
+                const data = await resp.json();
+
+                if (data.success) {
+                    // KPIs
+                    document.getElementById('kpi-total').textContent = data.total || 0;
+                    document.getElementById('kpi-aprobadas').textContent = data.aprobadas || 0;
+                    document.getElementById('kpi-proceso').textContent = data.en_proceso || 0;
+                    document.getElementById('kpi-finalizadas').textContent = data.finalizadas || 0;
+
+                    // Tabla
+                    const tbody = document.getElementById('tabla-body');
+                    const ordenes = data.ordenes || [];
+
+                    if (ordenes.length === 0) {
+                        tbody.innerHTML = '<tr><td colspan="8"><div class="empty-state"><i class="fas fa-inbox"></i><p>No hay ordenes express desde la web</p></div></td></tr>';
+                        return;
+                    }
+
+                    let html = '';
+                    ordenes.forEach(o => {
+                        const ot = otFormat(o.numero_orden);
+                        const marca = o.marca || '-';
+                        const modelo = o.modelo || '';
+                        const obs = o.diagnostico_observaciones || '';
+                        const tel = o.cliente_telefono || '-';
+                        const estado = o.estado_trabajo || o.estado || 'Aprobada';
+
+                        html += `<tr>
+                            <td><span class="ot-number">${ot}</span></td>
+                            <td><span class="patente-cell">${o.patente_placa || '-'}</span></td>
+                            <td class="marca-modelo">${marca} ${modelo}</td>
+                            <td class="cliente-cell">${o.cliente_nombre || '-'}</td>
+                            <td class="telefono-cell">${tel}</td>
+                            <td><span class="badge-estado ${badgeClass(estado)}">${estado}</span></td>
+                            <td class="fecha-cell">${formatearFecha(o.fecha_creacion || o.fecha_ingreso)}</td>
+                            <td class="obs-cell" title="${obs.replace(/"/g, '&quot;')}">${obs}</td>
+                        </tr>`;
+                    });
+
+                    tbody.innerHTML = html;
+                } else {
+                    document.getElementById('tabla-body').innerHTML = '<tr><td colspan="8"><div class="empty-state"><i class="fas fa-exclamation-triangle"></i><p>Error al cargar: ' + (data.error || 'Desconocido') + '</p></div></td></tr>';
+                }
+            } catch (err) {
+                document.getElementById('tabla-body').innerHTML = '<tr><td colspan="8"><div class="empty-state"><i class="fas fa-wifi"></i><p>Error de conexion. Intenta de nuevo.</p></div></td></tr>';
+            } finally {
+                btn.classList.remove('loading');
+            }
+        }
+
+        // Cargar al abrir
+        cargarOrdenes();
+
+        // Auto-refresh cada 60 segundos
+        setInterval(cargarOrdenes, 60000);
+    </script>
+</body>
+</html>

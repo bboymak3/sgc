@@ -1,0 +1,16 @@
+{
+  "name": "sgc-recordatorios",
+  "version": "1.0.0",
+  "description": "SGC - Sistema de recordatorios via WhatsApp",
+  "private": true,
+  "scripts": {
+    "dev": "wrangler dev",
+    "deploy": "wrangler deploy",
+    "db:create": "wrangler d1 execute sgc_ordenes_db --remote --file=./schema.sql"
+  },
+  "devDependencies": {
+    "@cloudflare/workers-types": "^4.20240117.0",
+    "typescript": "^5.3.3",
+    "wrangler": "^3.24.0"
+  }
+}

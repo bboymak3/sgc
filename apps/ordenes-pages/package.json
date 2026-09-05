@@ -1,0 +1,22 @@
+{
+  "name": "globalpro-ordenes-trabajo",
+  "version": "1.0.0",
+  "description": "Sistema de Órdenes de Trabajo para Global Pro Automotriz",
+  "main": "index.html",
+  "scripts": {
+    "dev": "npx serve . -p 3000",
+    "lint": "echo 'No linting configured'"
+  },
+  "keywords": [
+    "ordenes",
+    "trabajo",
+    "taller",
+    "automotriz",
+    "globalpro"
+  ],
+  "author": "Global Pro Automotriz",
+  "license": "MIT",
+  "dependencies": {
+    "jspdf": "^2.5.1"
+  }
+}

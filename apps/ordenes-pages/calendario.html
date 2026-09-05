@@ -1,0 +1,1815 @@
+<!DOCTYPE html>
+<html lang="es-CL">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Global Pro Automotriz - Calendario</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Leaflet CSS (mapa para seleccionar ubicacion en OT Express) -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <!-- FullCalendar -->
+    <script src='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.11/index.global.min.js'></script>
+    <style>
+        :root {
+            --gp-red: #a80000;
+            --gp-orange: #ff6b00;
+            --gp-green: #28a745;
+            --gp-dark: #121212;
+            --bg-body: #f5f5f5;
+            --bg-card: #ffffff;
+            --bg-input: #ffffff;
+            --text-primary: #212529;
+            --text-secondary: #6c757d;
+            --border-color: #000;
+            --border-subtle: #dee2e6;
+            --bg-bottom-bar: rgba(255,255,255,0.98);
+            --bg-bottom-btn: #fff;
+            --text-bottom-btn: #111;
+            --hover-bg: #f0f0f0;
+            --shadow-card: rgba(0,0,0,0.1);
+        }
+
+        /* ===== MODO OSCURO ===== */
+        [data-theme="dark"] {
+            --bg-body: #121212;
+            --bg-card: #1e1e1e;
+            --bg-input: #2a2a2a;
+            --text-primary: #e0e0e0;
+            --text-secondary: #aaaaaa;
+            --border-color: #555;
+            --border-subtle: #444;
+            --bg-bottom-bar: rgba(30,30,30,0.98);
+            --bg-bottom-btn: #2a2a2a;
+            --text-bottom-btn: #e0e0e0;
+            --hover-bg: #333;
+            --shadow-card: rgba(0,0,0,0.4);
+            color-scheme: dark;
+        }
+
+        [data-theme="dark"] body,
+        [data-theme="dark"] {
+            background-color: var(--bg-body) !important;
+            color: var(--text-primary);
+        }
+
+        [data-theme="dark"] .card {
+            background-color: var(--bg-card) !important;
+            box-shadow: 0 4px 15px var(--shadow-card);
+        }
+
+        [data-theme="dark"] .card-header {
+            background-color: #1a1a2e !important;
+            border-bottom: 1px solid var(--border-subtle);
+        }
+
+        [data-theme="dark"] .card-body {
+            background-color: var(--bg-card);
+        }
+
+        [data-theme="dark"] .form-control,
+        [data-theme="dark"] .form-select,
+        [data-theme="dark"] textarea.form-control {
+            background-color: var(--bg-input) !important;
+            border-color: var(--border-color) !important;
+            color: var(--text-primary) !important;
+        }
+
+        [data-theme="dark"] .form-control:focus,
+        [data-theme="dark"] .form-select:focus,
+        [data-theme="dark"] textarea.form-control:focus {
+            border-color: #0d6efd !important;
+            box-shadow: 0 0 0 0.2rem rgba(13, 110, 253, 0.35) !important;
+        }
+
+        [data-theme="dark"] .form-label {
+            color: #ccc;
+            border-bottom-color: var(--border-color);
+        }
+
+        [data-theme="dark"] .form-check-input {
+            border-color: var(--border-color) !important;
+            background-color: var(--bg-input);
+        }
+
+        [data-theme="dark"] .form-check-input:checked {
+            background-color: #0d6efd;
+            border-color: #0d6efd;
+        }
+
+        [data-theme="dark"] .table {
+            color: var(--text-primary);
+        }
+
+        [data-theme="dark"] .table thead th {
+            background-color: #2a2a2a !important;
+            color: #ddd;
+            border-color: var(--border-subtle);
+        }
+
+        [data-theme="dark"] .table td {
+            border-color: var(--border-subtle);
+        }
+
+        [data-theme="dark"] .table-hover tbody tr:hover {
+            background-color: var(--hover-bg);
+        }
+
+        [data-theme="dark"] .alert {
+            border-color: var(--border-subtle);
+        }
+
+        [data-theme="dark"] .alert-light {
+            background-color: #2a2a2a !important;
+            color: var(--text-primary);
+        }
+
+        [data-theme="dark"] .alert-warning {
+            background-color: #332701 !important;
+            color: #ffda6a;
+            border-color: #664d00;
+        }
+
+        [data-theme="dark"] .alert-success {
+            background-color: #051b11 !important;
+            color: #75b798;
+            border-color: #0f5132;
+        }
+
+        [data-theme="dark"] .alert-danger {
+            background-color: #2c0b0e !important;
+            color: #f1aeb5;
+            border-color: #6b2025;
+        }
+
+        [data-theme="dark"] .alert-info {
+            background-color: #052c65 !important;
+            color: #6ea8fe;
+            border-color: #0a58ca;
+        }
+
+        [data-theme="dark"] .alert-secondary {
+            background-color: #1a1a1a !important;
+            color: #adb5bd;
+        }
+
+        [data-theme="dark"] .badge.bg-warning {
+            background-color: #665200 !important;
+            color: #ffda6a !important;
+        }
+
+        [data-theme="dark"] .badge.bg-secondary {
+            background-color: #444 !important;
+            color: #ccc !important;
+        }
+
+        /* Sidebar dark mode handled by gp-sidebar-panel dark rule above */
+
+        [data-theme="dark"] .numero-orden {
+            background: linear-gradient(135deg, #1e1e1e 0%, #2a2a2a 100%);
+            color: #ff6b6b;
+        }
+
+        [data-theme="dark"] .navbar {
+            background-color: #0a0a0a !important;
+        }
+
+        [data-theme="dark"] .text-muted {
+            color: #888 !important;
+        }
+
+        [data-theme="dark"] .text-dark {
+            color: #e0e0e0 !important;
+        }
+
+        [data-theme="dark"] .small,
+        [data-theme="dark"] small {
+            color: var(--text-secondary);
+        }
+
+        [data-theme="dark"] .dropdown-menu {
+            background-color: var(--bg-card);
+            border-color: var(--border-subtle);
+        }
+
+        [data-theme="dark"] .dropdown-item {
+            color: var(--text-primary);
+        }
+
+        [data-theme="dark"] .dropdown-item:hover {
+            background-color: var(--hover-bg);
+        }
+
+        [data-theme="dark"] .btn-outline-primary {
+            color: #6ea8fe;
+            border-color: #6ea8fe;
+        }
+
+        [data-theme="dark"] .btn-outline-primary:hover {
+            background-color: #0d6efd;
+            color: #fff;
+        }
+
+        [data-theme="dark"] .modal-content {
+            background-color: var(--bg-card);
+            border-color: var(--border-subtle);
+        }
+
+        [data-theme="dark"] .modal-header {
+            border-color: var(--border-subtle);
+        }
+
+        [data-theme="dark"] .modal-footer {
+            border-color: var(--border-subtle);
+        }
+
+        [data-theme="dark"] .btn-close {
+            filter: invert(1) grayscale(100%) brightness(200%);
+        }
+
+        [data-theme="dark"] .estado-enviada {
+            background-color: #332701;
+            color: #ffda6a;
+            border-color: #665200;
+        }
+
+        [data-theme="dark"] .estado-aprobada {
+            background-color: #051b11;
+            color: #75b798;
+            border-color: #0f5132;
+        }
+
+        [data-theme="dark"] .estado-cancelada {
+            background-color: #2c0b0e;
+            color: #f1aeb5;
+            border-color: #6b2025;
+        }
+
+        [data-theme="dark"] ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+
+        [data-theme="dark"] ::-webkit-scrollbar-track {
+            background: #1a1a1a;
+        }
+
+        [data-theme="dark"] ::-webkit-scrollbar-thumb {
+            background: #555;
+            border-radius: 4px;
+        }
+
+        .btn-dark-mode {
+            background: none;
+            border: 2px solid rgba(255,255,255,0.3);
+            border-radius: 50%;
+            width: 38px;
+            height: 38px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            color: #ffc800;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-left: 8px;
+        }
+
+        .btn-dark-mode:hover {
+            border-color: #ffc800;
+            background: rgba(255,200,0,0.1);
+            transform: rotate(20deg);
+        }
+
+        /* body CSS movido abajo con padding-bottom */
+
+        .navbar {
+            background-color: var(--gp-dark) !important;
+            border-bottom: 3px solid var(--gp-red);
+        }
+
+        .navbar-brand {
+            color: white !important;
+            font-weight: bold;
+        }
+
+        .logo-container {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .logo-placeholder {
+            width: 50px;
+            height: 50px;
+            background-color: var(--gp-red);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 24px;
+        }
+
+        .card {
+            border: none;
+            border-radius: 15px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+        }
+
+        .card-header {
+            background-color: var(--gp-red);
+            color: white;
+            border-radius: 15px 15px 0 0 !important;
+            font-weight: bold;
+        }
+
+        .btn-primary {
+            background-color: var(--gp-red);
+            border-color: var(--gp-red);
+        }
+
+        .btn-primary:hover {
+            background-color: #800000;
+            border-color: #800000;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f5f5f5;
+            padding-bottom: 40px;
+        }
+
+        /* ===== SIDEBAR VERTICAL IZQUIERDO ===== */
+        .gp-sidebar {
+            position: fixed;
+            left: 0;
+            top: 50%;
+            transform: translateY(-50%);
+            z-index: 1050;
+            display: flex;
+            align-items: center;
+        }
+
+        /* Etapa 1: Tab visible en rojo con pulso en el borde izquierdo */
+        .gp-sidebar-tab {
+            width: 14px;
+            height: 80px;
+            border-radius: 0 8px 8px 0;
+            background: linear-gradient(180deg, #dc3545, #ff6b6b);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            z-index: 1051;
+            opacity: 0.85;
+            position: relative;
+            animation: sidebarTabPulse 2s ease-in-out infinite;
+            box-shadow: 2px 0 10px rgba(220,53,69,0.4);
+        }
+        .gp-sidebar-tab:hover {
+            opacity: 1;
+            width: 18px;
+            box-shadow: 3px 0 20px rgba(220,53,69,0.6);
+        }
+
+        @keyframes sidebarTabPulse {
+            0%, 100% { box-shadow: 2px 0 10px rgba(220,53,69,0.4); }
+            50% { box-shadow: 2px 0 22px rgba(220,53,69,0.8); }
+        }
+
+        /* Etapa 2: Botón rojo con pulso que aparece al hacer clic en el tab */
+        .gp-sidebar-toggle {
+            width: 52px;
+            height: 52px;
+            border-radius: 0 14px 14px 0;
+            background: linear-gradient(135deg, #dc3545 0%, #c82333 100%);
+            color: #fff;
+            border: 2px solid #ff6b6b;
+            border-left: none;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            box-shadow: 2px 2px 14px rgba(220,53,69,0.35);
+            transition: all 0.25s ease;
+            z-index: 1060;
+            font-size: 1.2rem;
+            position: relative;
+            animation: sidebarBtnPulse 1.8s ease-in-out infinite;
+        }
+
+        .gp-sidebar-toggle:hover {
+            background: linear-gradient(135deg, #ff6b6b 0%, #dc3545 100%);
+            color: #fff;
+            box-shadow: 2px 2px 24px rgba(220,53,69,0.6);
+            transform: scale(1.08);
+            animation: none;
+        }
+
+        .gp-sidebar-toggle.visible {
+            display: flex;
+        }
+
+        @keyframes sidebarBtnPulse {
+            0%, 100% { box-shadow: 2px 2px 14px rgba(220,53,69,0.35); }
+            50% { box-shadow: 2px 2px 28px rgba(220,53,69,0.75), 0 0 10px rgba(220,53,69,0.3); }
+        }
+
+        .gp-sidebar-panel {
+            position: fixed;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            width: 260px;
+            background: #1a2332;
+            color: #e0e0e0;
+            transform: translateX(-100%);
+            transition: transform 0.28s cubic-bezier(.4,0,.2,1);
+            z-index: 1055;
+            overflow-y: auto;
+            box-shadow: 6px 0 24px rgba(0,0,0,0.3);
+            padding-bottom: 20px;
+        }
+
+        .gp-sidebar-panel.open {
+            transform: translateX(0);
+        }
+
+        .gp-sidebar-panel.open + .gp-sidebar .gp-sidebar-toggle {
+            display: none;
+        }
+
+        .gp-sidebar-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 18px 16px 14px;
+            border-bottom: 1px solid rgba(255,255,255,0.08);
+        }
+
+        .gp-sidebar-header .gp-brand {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-weight: 900;
+            font-size: 1.15rem;
+            color: #fff;
+        }
+
+        .gp-sidebar-header .gp-brand i {
+            color: #ffc800;
+            font-size: 1.3rem;
+        }
+
+        .gp-sidebar-close {
+            background: none;
+            border: none;
+            color: #999;
+            font-size: 1.2rem;
+            cursor: pointer;
+            padding: 4px 8px;
+            border-radius: 8px;
+            transition: color 0.15s, background 0.15s;
+        }
+
+        .gp-sidebar-close:hover {
+            color: #fff;
+            background: rgba(255,255,255,0.1);
+        }
+
+        .gp-sidebar-section {
+            padding: 14px 12px 6px;
+        }
+
+        .gp-sidebar-section-title {
+            font-size: 0.7rem;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 0.12em;
+            color: #6b7d94;
+            padding: 0 6px 8px;
+        }
+
+        .gp-sidebar-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 14px 18px;
+            margin: 4px 0;
+            color: #d0dae6;
+            font-size: 1.05rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            text-decoration: none;
+            border-radius: 12px;
+            background: rgba(255,255,255,0.04);
+            border: 1px solid rgba(255,255,255,0.06);
+            letter-spacing: 0.02em;
+        }
+
+        .gp-sidebar-item:hover {
+            background: rgba(255,255,255,0.12);
+            color: #fff;
+            border-color: rgba(255,255,255,0.15);
+            transform: scale(1.02);
+            box-shadow: 0 2px 12px rgba(0,0,0,0.2);
+        }
+
+        .gp-sidebar-item.active {
+            background: linear-gradient(135deg, rgba(255,200,0,0.18) 0%, rgba(255,140,0,0.12) 100%);
+            color: #ffc800;
+            border-color: rgba(255,200,0,0.35);
+            box-shadow: 0 2px 16px rgba(255,200,0,0.1);
+        }
+
+        .gp-sidebar-item i {
+            width: 24px;
+            text-align: center;
+            font-size: 1.15rem;
+        }
+
+        /* ===== SIDEBAR COLORED ITEMS ===== */
+        .gp-sidebar-item.gp-colored i {
+            width: 36px;
+            height: 36px;
+            min-width: 36px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            border: 2.5px solid rgba(255,255,255,0.92);
+            font-size: 0.95rem;
+            color: #fff;
+            background: rgb(var(--c, 100,100,100));
+            text-shadow: 0 1px 2px rgba(0,0,0,0.25);
+            box-shadow: 0 2px 8px rgba(var(--c, 100,100,100), 0.35);
+            transition: all 0.2s ease;
+        }
+        .gp-sidebar-item.gp-colored {
+            background: rgba(var(--c, 100,100,100), 0.05);
+            border: 1px solid rgba(var(--c, 100,100,100), 0.1);
+            border-left: 3.5px solid rgb(var(--c, 100,100,100));
+            font-weight: 700;
+        }
+        .gp-sidebar-item.gp-colored:hover {
+            background: rgba(var(--c, 100,100,100), 0.14);
+            border-color: rgba(var(--c, 100,100,100), 0.25);
+            border-left-color: rgb(var(--c, 100,100,100));
+            box-shadow: 0 2px 14px rgba(var(--c, 100,100,100), 0.18);
+            transform: scale(1.02);
+        }
+        .gp-sidebar-item.gp-colored:hover i {
+            transform: scale(1.1);
+            box-shadow: 0 4px 14px rgba(var(--c, 100,100,100), 0.5);
+            border-color: #fff;
+        }
+        .gp-sidebar-item.gp-colored.active {
+            background: rgba(var(--c, 100,100,100), 0.2);
+            border-color: rgba(var(--c, 100,100,100), 0.4);
+            border-left-color: rgb(var(--c, 100,100,100));
+            color: rgb(var(--c, 100,100,100));
+            box-shadow: 0 2px 18px rgba(var(--c, 100,100,100), 0.2);
+        }
+        .gp-sidebar-item.gp-colored.active i {
+            transform: scale(1.08);
+            box-shadow: 0 4px 16px rgba(var(--c, 100,100,100), 0.55);
+            border-color: #fff;
+            animation: gpIconPulse 2s ease-in-out infinite;
+        }
+        @keyframes gpIconPulse {
+            0%, 100% { box-shadow: 0 4px 16px rgba(var(--c, 100,100,100), 0.55); }
+            50% { box-shadow: 0 4px 24px rgba(var(--c, 100,100,100), 0.8); }
+        }
+
+        /* Legacy: danger-item kept for Cerrar Sesión fallback */
+        .gp-sidebar-item.danger-item {
+            background: rgba(220,53,69,0.08);
+            border-color: rgba(220,53,69,0.15);
+        }
+        .gp-sidebar-item.danger-item i { color: #dc3545; }
+        .gp-sidebar-item.danger-item:hover {
+            background: rgba(220,53,69,0.2);
+            border-color: rgba(220,53,69,0.35);
+        }
+
+        .gp-sidebar-divider {
+            height: 1px;
+            background: rgba(255,255,255,0.06);
+            margin: 6px 16px;
+        }
+
+        [data-theme="dark"] .gp-sidebar-panel {
+            background: #111820;
+        }
+
+        /* Overlay oscuro al abrir sidebar */
+        .gp-sidebar-overlay {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.4);
+            z-index: 1052;
+        }
+        .gp-sidebar-overlay.show {
+            display: block;
+        }
+
+        /* Responsive: en pantallas chicas el sidebar es más ancho */
+        @media (max-width: 576px) {
+            .gp-sidebar-panel {
+                width: 230px;
+            }
+        }
+
+        .navbar-nav .nav-link {
+            font-weight: 700;
+            letter-spacing: 0.03em;
+        }
+
+        .patente-input {
+            font-size: 2rem;
+            font-weight: bold;
+            text-align: center;
+            text-transform: uppercase;
+            letter-spacing: 3px;
+            border: 3px solid var(--gp-red);
+            border-radius: 10px;
+            padding: 15px;
+        }
+
+        .patente-input:focus {
+            border-color: var(--gp-orange);
+            box-shadow: 0 0 10px rgba(255, 107, 0, 0.3);
+        }
+
+        /* Bordes negros en TODOS los campos del sistema */
+        .form-control, .form-select, textarea.form-control {
+            border: 2px solid #000 !important;
+            border-radius: 6px;
+            font-weight: 500;
+        }
+        .form-control:focus, .form-select:focus, textarea.form-control:focus {
+            border-color: #000 !important;
+            box-shadow: 0 0 0 0.2rem rgba(0, 0, 0, 0.15) !important;
+        }
+        .form-label {
+            font-weight: 700;
+            color: #333;
+            border-bottom: 2px solid #000;
+            padding-bottom: 2px;
+            display: inline-block;
+            margin-bottom: 4px;
+        }
+        .form-check-input {
+            border: 2px solid #000 !important;
+            accent-color: #000;
+        }
+
+        .numero-orden {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: var(--gp-red);
+            text-align: center;
+            background: linear-gradient(135deg, #fff 0%, #f8f8f8 100%);
+            border: 2px solid var(--gp-red);
+            border-radius: 8px;
+            padding: 10px;
+            margin-bottom: 15px;
+        }
+
+        /* Estados de orden */
+        .estado-enviada {
+            background-color: #fff3cd;
+            color: #856404;
+            border: 2px solid #ffc107;
+        }
+
+        .estado-aprobada {
+            background-color: #d4edda;
+            color: #155724;
+            border: 2px solid #28a745;
+        }
+
+        .estado-cancelada {
+            background-color: #f8d7da;
+            color: #721c24;
+            border: 2px solid #dc3545;
+        }
+
+        .orden-card {
+            transition: transform 0.3s, box-shadow 0.3s;
+            cursor: pointer;
+        }
+
+        .orden-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+        }
+
+        .filtro-btn {
+            border-radius: 20px;
+            padding: 8px 20px;
+            margin: 5px;
+            font-weight: 500;
+        }
+
+        .filtro-btn.active {
+            background-color: var(--gp-red);
+            color: white;
+            border-color: var(--gp-red);
+        }
+
+        .trabajo-item {
+            background-color: #f8f9fa;
+            padding: 10px;
+            border-radius: 8px;
+            margin-bottom: 10px;
+            border-left: 4px solid var(--gp-red);
+        }
+
+        .resumen-pagos {
+            background: linear-gradient(135deg, #6c757d 0%, #495057 100%);
+            color: white;
+            border-radius: 15px;
+            padding: 20px;
+        }
+
+        .checklist-item {
+            padding: 8px 12px;
+            border-radius: 8px;
+            background-color: #fff;
+            border: 1px solid #dee2e6;
+            margin-bottom: 5px;
+        }
+
+        .checklist-item.checked {
+            background-color: #d4edda;
+            border-color: #28a745;
+        }
+
+        .loading {
+            display: none;
+            text-align: center;
+            padding: 20px;
+        }
+
+        .loading.show {
+            display: block;
+        }
+
+        .spinner-border {
+            width: 3rem;
+            height: 3rem;
+        }
+
+        @media (max-width: 768px) {
+            .patente-input {
+                font-size: 1.5rem;
+            }
+
+            .numero-orden {
+                font-size: 1.8rem;
+            }
+
+            #navbarNav {
+                max-height: 75vh;
+                overflow-y: auto;
+                background: #121212 !important;
+                padding: 12px 0;
+                margin: 0 -12px;
+                border-top: 2px solid var(--gp-red);
+            }
+            #navbarNav .nav-link {
+                padding: 12px 16px !important;
+                font-size: 1rem;
+                border-bottom: 1px solid rgba(255,255,255,0.08);
+                color: #ccc !important;
+            }
+            #navbarNav .nav-link.active {
+                color: #fff !important;
+                background: var(--gp-red);
+                border-radius: 0 8px 8px 0;
+                margin-right: 8px;
+            }
+            .nav-tabs-gp {
+                display: flex;
+                flex-wrap: nowrap;
+                overflow-x: auto;
+                -webkit-overflow-scrolling: touch;
+                scrollbar-width: none;
+            }
+            .nav-tabs-gp::-webkit-scrollbar { display: none; }
+            .nav-tabs-gp .nav-item { flex: 0 0 auto; }
+            .nav-tabs-gp .nav-link { white-space: nowrap; font-size: 0.78rem; padding: 8px 12px; }
+        }
+
+        /* Costos Adicionales Modal - Rediseño Compacto */
+        .modal-costos .modal-dialog {
+            max-width: 520px;
+        }
+        .modal-costos .modal-content {
+            border: none;
+            border-radius: 16px;
+            overflow: hidden;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.25);
+        }
+        .modal-costos .modal-header {
+            background: linear-gradient(135deg, #ff6b00 0%, #ff8c33 50%, #ffaa55 100%);
+            border: none;
+            padding: 14px 20px;
+        }
+        .modal-costos .modal-header .modal-title {
+            font-size: 1rem;
+            font-weight: 800;
+            letter-spacing: 0.03em;
+            text-transform: uppercase;
+        }
+        .modal-costos .modal-header .modal-title i {
+            filter: drop-shadow(0 2px 4px rgba(0,0,0,0.2));
+        }
+        .modal-costos .modal-body {
+            padding: 16px 20px;
+            background: #fafafa;
+        }
+        .modal-costos .modal-footer {
+            background: #f0f0f0;
+            border-top: 2px solid #e0e0e0;
+            padding: 10px 20px;
+        }
+        .modal-costos .gp-costos-info-bar {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            background: linear-gradient(135deg, #fff5eb 0%, #fff0e0 100%);
+            border: 1.5px solid #ffd4a8;
+            border-radius: 10px;
+            padding: 8px 14px;
+            margin-bottom: 14px;
+            font-size: 0.82rem;
+        }
+        .modal-costos .gp-costos-info-bar .gp-info-item {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .modal-costos .gp-costos-info-bar .gp-info-item i {
+            color: #ff6b00;
+            font-size: 0.75rem;
+        }
+        .modal-costos .gp-costos-info-bar .gp-info-item strong {
+            color: #333;
+        }
+        .modal-costos .gp-costos-info-bar .gp-info-item span {
+            color: #666;
+            font-weight: 600;
+        }
+        .modal-costos .gp-form-costo {
+            background: #fff;
+            border: 2px solid #ffe0c0;
+            border-radius: 12px;
+            padding: 12px;
+            margin-bottom: 14px;
+        }
+        .modal-costos .gp-form-costo .gp-form-title {
+            font-size: 0.75rem;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 0.06em;
+            color: #ff6b00;
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .modal-costos .gp-form-costo .form-select,
+        .modal-costos .gp-form-costo .form-control {
+            border: 1.5px solid #ddd !important;
+            border-radius: 8px !important;
+            font-size: 0.82rem;
+            padding: 6px 10px;
+            transition: border-color 0.2s;
+        }
+        .modal-costos .gp-form-costo .form-select:focus,
+        .modal-costos .gp-form-costo .form-control:focus {
+            border-color: #ff6b00 !important;
+            box-shadow: 0 0 0 3px rgba(255,107,0,0.12) !important;
+        }
+        .modal-costos .gp-btn-add {
+            background: linear-gradient(135deg, #28a745, #20c997);
+            border: none;
+            border-radius: 8px;
+            color: #fff;
+            font-weight: 800;
+            font-size: 0.82rem;
+            padding: 6px 14px;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            transition: all 0.2s;
+            box-shadow: 0 3px 8px rgba(40,167,69,0.3);
+        }
+        .modal-costos .gp-btn-add:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 5px 12px rgba(40,167,69,0.4);
+            background: linear-gradient(135deg, #20c997, #28a745);
+        }
+        .modal-costos .gp-btn-add:active {
+            transform: translateY(0);
+        }
+        .modal-costos .gp-costos-list-title {
+            font-size: 0.75rem;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 0.06em;
+            color: #555;
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        .modal-costos .gp-costos-list-title .gp-count {
+            background: #ff6b00;
+            color: #fff;
+            border-radius: 10px;
+            padding: 1px 8px;
+            font-size: 0.7rem;
+            font-weight: 700;
+        }
+        .modal-costos .costo-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 12px;
+            background: #fff;
+            border-radius: 10px;
+            margin-bottom: 6px;
+            border: 1px solid #eee;
+            border-left: 4px solid #ff6b00;
+            transition: all 0.15s ease;
+        }
+        .modal-costos .costo-item:hover {
+            box-shadow: 0 3px 10px rgba(0,0,0,0.06);
+            border-left-color: #e05500;
+        }
+        .modal-costos .costo-item.repuesto-item {
+            border-left-color: #6c757d;
+        }
+        .modal-costos .costo-item.repuesto-item:hover {
+            border-left-color: #495057;
+        }
+        .modal-costos .costo-item .costo-info {
+            flex: 1;
+        }
+        .modal-costos .costo-item .costo-info strong {
+            font-size: 0.85rem;
+            color: #222;
+        }
+        .modal-costos .costo-item .costo-info small {
+            font-size: 0.7rem;
+            color: #999;
+        }
+        .modal-costos .costo-item .costo-valor {
+            font-weight: 800;
+            color: #a80000;
+            font-size: 0.95rem;
+        }
+        .modal-costos .costo-item .gp-btn-del {
+            background: none;
+            border: 1.5px solid #ffcdd2;
+            border-radius: 6px;
+            color: #d32f2f;
+            width: 28px;
+            height: 28px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.7rem;
+            transition: all 0.2s;
+            cursor: pointer;
+            padding: 0;
+        }
+        .modal-costos .costo-item .gp-btn-del:hover {
+            background: #d32f2f;
+            color: #fff;
+            border-color: #d32f2f;
+        }
+        .modal-costos .gp-totals-box {
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+            color: white;
+            border-radius: 12px;
+            padding: 14px 16px;
+            margin-top: 14px;
+            box-shadow: 0 4px 15px rgba(15,52,96,0.3);
+        }
+        .modal-costos .gp-totals-box .gp-total-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 4px 0;
+            font-size: 0.82rem;
+        }
+        .modal-costos .gp-totals-box .gp-total-row.total-extras {
+            border-top: 1px solid rgba(255,255,255,0.15);
+            margin-top: 4px;
+            padding-top: 8px;
+        }
+        .modal-costos .gp-totals-box .gp-total-row.total-extras .gp-label {
+            color: #ffc107;
+            font-weight: 700;
+        }
+        .modal-costos .gp-totals-box .gp-total-row.total-final {
+            border-top: 2px solid #ff6b00;
+            margin-top: 6px;
+            padding-top: 10px;
+        }
+        .modal-costos .gp-totals-box .gp-total-row.total-final .gp-label {
+            font-size: 0.9rem;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+        .modal-costos .gp-totals-box .gp-total-row.total-final .gp-value {
+            font-size: 1.15rem;
+            font-weight: 900;
+            color: #ff6b00;
+            text-shadow: 0 0 10px rgba(255,107,0,0.4);
+        }
+        .modal-costos .gp-totals-box .gp-desglose {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 6px;
+        }
+        .modal-costos .gp-totals-box .gp-desglose-item {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            font-size: 0.72rem;
+        }
+        .modal-costos .gp-totals-box .gp-desglose-item .gp-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+        }
+        .modal-costos .gp-totals-box .gp-desglose-item .gp-dot.mo { background: #ffc107; }
+        .modal-costos .gp-totals-box .gp-desglose-item .gp-dot.rep { background: #6c757d; }
+        .modal-costos .gp-empty-costos {
+            text-align: center;
+            padding: 18px;
+            background: #fff;
+            border: 2px dashed #e0e0e0;
+            border-radius: 12px;
+            color: #aaa;
+            font-size: 0.85rem;
+        }
+        .modal-costos .gp-empty-costos i {
+            font-size: 1.8rem;
+            color: #ddd;
+            display: block;
+            margin-bottom: 6px;
+        }
+        /* Dark mode for costos modal */
+        [data-theme="dark"] .modal-costos .modal-body { background: #1e1e1e; }
+        [data-theme="dark"] .modal-costos .modal-footer { background: #1a1a1a; border-top-color: #333; }
+        [data-theme="dark"] .modal-costos .gp-costos-info-bar { background: linear-gradient(135deg, #2a1f10 0%, #1e1510 100%); border-color: #553300; }
+        [data-theme="dark"] .modal-costos .gp-costos-info-bar .gp-info-item strong { color: #e0e0e0; }
+        [data-theme="dark"] .modal-costos .gp-costos-info-bar .gp-info-item span { color: #aaa; }
+        [data-theme="dark"] .modal-costos .gp-form-costo { background: #252525; border-color: #553300; }
+        [data-theme="dark"] .modal-costos .gp-form-costo .form-select,
+        [data-theme="dark"] .modal-costos .gp-form-costo .form-control { background: #333 !important; border-color: #553300 !important; color: #e0e0e0 !important; }
+        [data-theme="dark"] .modal-costos .costo-item { background: #252525; border-color: #333; }
+        [data-theme="dark"] .modal-costos .costo-item:hover { box-shadow: 0 3px 10px rgba(0,0,0,0.3); }
+        [data-theme="dark"] .modal-costos .costo-item .costo-info strong { color: #e0e0e0; }
+        [data-theme="dark"] .modal-costos .gp-empty-costos { background: #252525; border-color: #444; color: #888; }
+        [data-theme="dark"] .modal-costos .gp-empty-costos i { color: #555; }
+        /* Tabs personalizados */
+        .nav-tabs-gp .nav-link {
+            color: #333;
+            font-weight: 700;
+            border: none;
+            padding: 10px 16px;
+            border-radius: 10px 10px 0 0;
+            margin-right: 4px;
+        }
+        .nav-tabs-gp .nav-link.active {
+            background-color: var(--gp-red);
+            color: white;
+        }
+        .nav-tabs-gp .nav-link:hover:not(.active) {
+            background-color: #e9ecef;
+            color: #333;
+        }
+
+        /* KPI Cards */
+        .kpi-card {
+            border: none;
+            border-radius: 15px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+            padding: 20px;
+            text-align: center;
+            transition: transform 0.2s;
+        }
+        .kpi-card:hover {
+            transform: translateY(-3px);
+        }
+        .kpi-card .kpi-value {
+            font-size: 1.8rem;
+            font-weight: 800;
+        }
+        .kpi-card .kpi-label {
+            font-size: 0.85rem;
+            color: #666;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            font-weight: 600;
+        }
+        .kpi-success { border-left: 5px solid var(--gp-green); }
+        .kpi-danger { border-left: 5px solid var(--gp-red); }
+        .kpi-primary { border-left: 5px solid #0d6efd; }
+        .kpi-warning { border-left: 5px solid #ffc107; }
+        .kpi-info { border-left: 5px solid #17a2b8; }
+        .kpi-orange { border-left: 5px solid var(--gp-orange); }
+        /* Barra horizontal simple */
+        .bar-horizontal {
+            height: 24px;
+            border-radius: 12px;
+            background: #e9ecef;
+            overflow: hidden;
+            margin-bottom: 8px;
+        }
+        .bar-horizontal .bar-fill {
+            height: 100%;
+            border-radius: 12px;
+            background: linear-gradient(90deg, var(--gp-red), var(--gp-orange));
+            transition: width 0.5s ease;
+            display: flex;
+            align-items: center;
+            padding: 0 10px;
+            font-size: 0.75rem;
+            font-weight: bold;
+            color: white;
+            min-width: fit-content;
+        }
+        /* Tabla mejorada */
+        .table-gp th {
+            background-color: var(--gp-red);
+            color: white;
+            font-weight: 700;
+            font-size: 0.85rem;
+            border: none;
+        }
+        .table-gp td {
+            vertical-align: middle;
+            font-size: 0.9rem;
+        }
+        .table-gp tbody tr:hover {
+            background-color: #fff5f5;
+        }
+        /* Estado badges mejorados */
+        .badge-estado {
+            font-size: 0.75rem;
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-weight: 700;
+        }
+        /* Liquidación: Estilos para filas canceladas/pendientes */
+        .row-cancelado {
+            background-color: #f8d7da !important;
+            transition: all 0.3s ease;
+        }
+        .row-pendiente {
+            transition: all 0.3s ease;
+        }
+        .liquidacion-check:checked {
+            background-color: #dc3545 !important;
+            border-color: #dc3545 !important;
+        }
+        .liquidacion-check {
+            cursor: pointer;
+        }
+        /* Calendario FullCalendar */
+        #calendar-container {
+            background: var(--bg-card);
+            border-radius: 15px;
+            box-shadow: 0 4px 15px var(--shadow-card);
+            padding: 15px;
+        }
+        .fc {
+            font-size: 0.85rem;
+        }
+        .fc .fc-toolbar-title {
+            font-size: 1.1rem !important;
+            font-weight: 800;
+        }
+        .fc .fc-button-primary {
+            background-color: var(--gp-red) !important;
+            border-color: var(--gp-red) !important;
+            font-weight: 600;
+            font-size: 0.8rem;
+        }
+        .fc .fc-button-primary:hover {
+            background-color: #800000 !important;
+            border-color: #800000 !important;
+        }
+        .fc .fc-button-primary:not(:disabled).fc-button-active {
+            background-color: #800000 !important;
+            border-color: #800000 !important;
+        }
+        .fc .fc-daygrid-day-number {
+            font-weight: 600;
+            padding: 6px;
+        }
+        .fc .fc-event {
+            border-radius: 6px;
+            padding: 2px 6px;
+            font-size: 0.78rem;
+            font-weight: 600;
+            cursor: pointer;
+            border: none;
+        }
+        .fc .fc-event:hover {
+            opacity: 0.85;
+        }
+        .fc .fc-col-header-cell-cushion {
+            font-weight: 700;
+            color: #555;
+        }
+        [data-theme="dark"] #calendar-container { background: var(--bg-card); }
+        [data-theme="dark"] .fc { color: var(--text-primary); }
+
+        /* Papelera del calendario - drag to delete */
+        .cal-trash-zone {
+            position: fixed;
+            bottom: -80px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 280px;
+            z-index: 9999;
+            transition: bottom 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+            pointer-events: none;
+        }
+        .cal-trash-zone.visible {
+            bottom: 20px;
+            pointer-events: all;
+        }
+        .cal-trash-inner {
+            background: linear-gradient(135deg, #dc3545, #c82333);
+            color: #fff;
+            border-radius: 16px;
+            padding: 16px 24px;
+            text-align: center;
+            font-weight: 700;
+            font-size: 0.95rem;
+            box-shadow: 0 8px 30px rgba(220, 53, 69, 0.5);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            transition: all 0.2s ease;
+            border: 3px dashed rgba(255,255,255,0.4);
+        }
+        .cal-trash-zone.visible .cal-trash-inner {
+            animation: trashPulse 1.5s ease-in-out infinite;
+        }
+        .cal-trash-zone.hover .cal-trash-inner {
+            background: linear-gradient(135deg, #b02a37, #921925);
+            transform: scale(1.08);
+            box-shadow: 0 12px 40px rgba(220, 53, 69, 0.7);
+            border-color: #fff;
+        }
+        .cal-trash-zone.hover .cal-trash-inner i {
+            animation: trashShake 0.3s ease-in-out infinite;
+        }
+        .cal-trash-inner i {
+            font-size: 1.4rem;
+        }
+        .cal-trash-inner span {
+            letter-spacing: 0.03em;
+        }
+        @keyframes trashPulse {
+            0%, 100% { box-shadow: 0 8px 30px rgba(220, 53, 69, 0.5); }
+            50% { box-shadow: 0 8px 40px rgba(220, 53, 69, 0.8); }
+        }
+        @keyframes trashShake {
+            0%, 100% { transform: rotate(0deg); }
+            25% { transform: rotate(-8deg); }
+            75% { transform: rotate(8deg); }
+        }
+        [data-theme="dark"] .fc .fc-toolbar-title { color: var(--text-primary); }
+        [data-theme="dark"] .fc .fc-col-header-cell-cushion { color: #aaa; }
+        [data-theme="dark"] .fc .fc-daygrid-day-number { color: var(--text-primary); }
+        [data-theme="dark"] .fc .fc-daygrid-day { background: var(--bg-card); }
+        [data-theme="dark"] .fc .fc-daygrid-day.fc-day-today { background: #2a2a1a !important; }
+        [data-theme="dark"] .fc .fc-daygrid-day:hover { background: var(--hover-bg); }
+        [data-theme="dark"] .fc th { border-color: var(--border-subtle); }
+        [data-theme="dark"] .fc td { border-color: var(--border-subtle); }
+        .cal-filter-bar {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            align-items: end;
+            margin-bottom: 15px;
+        }
+        .cal-filter-bar .form-select, .cal-filter-bar .form-control {
+            max-width: 200px;
+            font-size: 0.85rem;
+        }
+        .cal-legend {
+            display: flex;
+            gap: 14px;
+            flex-wrap: wrap;
+            font-size: 0.78rem;
+            margin-bottom: 12px;
+        }
+        .cal-legend-item {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+        .cal-legend-dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 3px;
+        }
+        @keyframes gp-pulse-badge {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.4); background-color: #dc3545; }
+        }
+    </style>
+</head>
+<body>
+    <!-- LOGIN OVERLAY -->
+    <div id="login-overlay" style="position:fixed;top:0;left:0;width:100%;height:100%;background:linear-gradient(135deg,#1a1a2e 0%,#16213e 50%,#0f3460 100%);z-index:999999;display:flex;align-items:center;justify-content:center;">
+        <div style="background:#fff;border-radius:20px;box-shadow:0 20px 60px rgba(0,0,0,0.4);max-width:400px;width:90%;padding:40px;">
+            <div style="text-align:center;margin-bottom:30px;">
+                <div style="width:80px;height:80px;background:var(--gp-red);border-radius:50%;display:inline-flex;align-items:center;justify-content:center;margin-bottom:15px;">
+                    <i class="fas fa-wrench" style="font-size:2rem;color:#fff;"></i>
+                </div>
+                <h3 style="color:#1a1a2e;font-weight:800;margin-bottom:5px;">GLOBAL PRO</h3>
+                <p style="color:#666;font-size:0.9rem;">Panel de Administracion</p>
+            </div>
+            <div id="login-error" style="display:none;" class="alert alert-danger py-2" role="alert"></div>
+            <div class="mb-3">
+                <label class="form-label fw-bold" style="color:#333;"><i class="fas fa-user me-1"></i>Usuario</label>
+                <input type="text" id="login-usuario" class="form-control form-control-lg" placeholder="Ingrese su usuario" style="border-radius:10px;border:2px solid #e0e0e0;padding:12px 15px;font-size:1rem;">
+            </div>
+            <div class="mb-4">
+                <label class="form-label fw-bold" style="color:#333;"><i class="fas fa-lock me-1"></i>Contrasena</label>
+                <input type="password" id="login-password" class="form-control form-control-lg" placeholder="Ingrese su contrasena" style="border-radius:10px;border:2px solid #e0e0e0;padding:12px 15px;font-size:1rem;" onkeydown="if(event.key==='Enter')doLogin()">
+            </div>
+            <button id="login-btn" onclick="doLogin()" class="btn btn-lg w-100" style="background:var(--gp-red);color:#fff;border-radius:10px;font-weight:700;padding:12px;font-size:1.1rem;border:none;">
+                <i class="fas fa-sign-in-alt me-2"></i>Ingresar
+            </button>
+            <p class="text-center mt-3" style="color:#aaa;font-size:0.75rem;">Global Pro Automotriz v2.0</p>
+        </div>
+    </div>
+    <!-- MAIN APP (hidden until login) -->
+    <div id="main-app" style="display:none;">
+
+    <div class="container mt-4 mb-5">
+
+        <!-- Sección: Calendario de Agendamiento -->
+        <div id="seccion-calendario" style="display: block;">
+            <div class="row mb-4">
+                <div class="col-12 text-center">
+                    <h1 class="display-4 fw-bold" style="color: #0d6efd;"><i class="fas fa-calendar-alt me-2"></i>Calendario</h1>
+                    <p class="text-muted">Agenda de trabajos por técnico - Taller y Domicilio</p>
+                </div>
+            </div>
+
+            <!-- Filtros -->
+            <div class="card mb-3">
+                <div class="card-body py-2">
+                    <div class="cal-filter-bar">
+                        <div>
+                            <label class="form-label mb-1" style="font-size:0.75rem;">Técnico</label>
+                            <select class="form-select" id="cal-filtro-tecnico" onchange="recargarCalendario()">
+                                <option value="">Todos los técnicos</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="form-label mb-1" style="font-size:0.75rem;">Tipo Servicio</label>
+                            <select class="form-select" id="cal-filtro-tipo" onchange="recargarCalendario()">
+                                <option value="">Todos</option>
+                                <option value="taller">Taller</option>
+                                <option value="domicilio">Domicilio</option>
+                                <option value="inspeccion">Inspección</option>
+                                <option value="urgencia">Urgencia</option>
+                                <option value="otro">Otro</option>
+                            </select>
+                        </div>
+                        <div>
+                            <button class="btn btn-sm btn-primary" onclick="abrirModalNuevoEvento()" title="Nuevo Evento">
+                                <i class="fas fa-plus me-1"></i>Nuevo Evento
+                            </button>
+                        </div>
+                    </div>
+                    <!-- Leyenda -->
+                    <div class="cal-legend">
+                        <div class="cal-legend-item"><div class="cal-legend-dot" style="background:#0d6efd;"></div>Taller</div>
+                        <div class="cal-legend-item"><div class="cal-legend-dot" style="background:#ff6b00;"></div>Domicilio</div>
+                        <div class="cal-legend-item"><div class="cal-legend-dot" style="background:#28a745;"></div>Inspección</div>
+                        <div class="cal-legend-item"><div class="cal-legend-dot" style="background:#dc3545;"></div>Urgencia</div>
+                        <div class="cal-legend-item"><div class="cal-legend-dot" style="background:#6c757d;"></div>Otro</div>
+                        <div class="cal-legend-item"><div class="cal-legend-dot" style="background:#a80000;border:2px dashed #a80000;background:transparent;"></div>OT Programada</div>
+                        <div class="cal-legend-item"><div class="cal-legend-dot" style="background:#16a34a;"></div>Cita IA - Taller</div>
+                        <div class="cal-legend-item"><div class="cal-legend-dot" style="background:#2563eb;"></div>Cita IA - Domicilio</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Panel: Órdenes del Bot IA (Aprobar/Rechazar) -->
+            <div class="card mb-3" id="card-ordenes-bot" style="border-left:4px solid #16a34a;">
+                <div class="card-header bg-transparent d-flex justify-content-between align-items-center py-2 px-3" style="cursor:pointer" onclick="toggleOrdenesBot()">
+                    <h6 class="mb-0" style="color:#16a34a;">
+                        <i class="fas fa-robot me-2"></i>Órdenes del Bot IA
+                        <span class="badge bg-warning text-dark ms-2" id="ordenes-bot-pendientes-badge">0 pendientes</span>
+                    </h6>
+                    <i class="fas fa-chevron-down" id="ordenes-bot-chevron" style="color:#6c757d;transition:.2s"></i>
+                </div>
+                <div class="card-body p-3" id="ordenes-bot-body">
+                    <!-- Stats mini -->
+                    <div class="d-flex gap-2 mb-3 flex-wrap" id="ordenes-bot-stats"></div>
+                    <!-- Refresh -->
+                    <div class="d-flex gap-2 mb-3 align-items-center flex-wrap">
+                        <small class="text-muted"><i class="fas fa-info-circle me-1"></i>Solo se muestran citas pendientes. Las aprobadas aparecen en la lista debajo del calendario.</small>
+                        <button class="btn btn-sm btn-outline-secondary ms-auto" onclick="cargarOrdenesBot()"><i class="fas fa-sync-alt"></i></button>
+                    </div>
+                    <!-- Orders list -->
+                    <div id="ordenes-bot-list" style="max-height:500px;overflow-y:auto"></div>
+                </div>
+            </div>
+
+            <!-- Modal Rechazar Cita Bot IA -->
+            <div class="modal fade" id="modalRechazarCitaBot" tabindex="-1">
+                <div class="modal-dialog modal-dialog-centered">
+                    <div class="modal-content" style="border-top:3px solid #dc3545">
+                        <div class="modal-header bg-danger bg-opacity-10">
+                            <h6 class="modal-title"><i class="fas fa-times-circle me-2 text-danger"></i>Rechazar Cita del Bot IA</h6>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                        </div>
+                        <div class="modal-body">
+                            <p class="text-muted small">Se enviará un WhatsApp al cliente informando el rechazo con el número de contacto de Global Pro.</p>
+                            <div class="mb-3">
+                                <label class="form-label fw-semibold small">Motivo del rechazo (opcional)</label>
+                                <textarea class="form-control form-control-sm" id="rechazar-cita-motivo" rows="3" placeholder="Ej: Horario no disponible, servicio suspendido, etc."></textarea>
+                            </div>
+                            <input type="hidden" id="rechazar-cita-id">
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal">Cancelar</button>
+                            <button type="button" class="btn btn-danger btn-sm" onclick="confirmarRechazarCitaBot()"><i class="fas fa-ban me-1"></i>Rechazar y enviar WhatsApp</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Contenedor del Calendario -->
+            <div id="calendar-container">
+                <div id='fullcalendar'></div>
+            </div>
+
+            <!-- Zona Papelera para eliminar eventos arrastrando -->
+            <div id="cal-trash-zone" class="cal-trash-zone">
+                <div class="cal-trash-inner">
+                    <i class="fas fa-trash-alt"></i>
+                    <span>Arrastra aquí para eliminar</span>
+                </div>
+            </div>
+
+            <!-- Lista de Citas Aceptadas (debajo del calendario) -->
+            <div class="card mb-3 mt-3" id="card-citas-aceptadas" style="border-left:4px solid #16a34a; display:none;">
+                <div class="card-header bg-transparent d-flex justify-content-between align-items-center py-2 px-3" style="cursor:pointer" onclick="toggleCitasAceptadas()">
+                    <h6 class="mb-0" style="color:#16a34a;">
+                        <i class="fas fa-clipboard-check me-2"></i>Citas Aceptadas del Bot IA
+                        <span class="badge bg-success ms-2" id="citas-aceptadas-count">0</span>
+                    </h6>
+                    <i class="fas fa-chevron-down" id="citas-aceptadas-chevron" style="color:#6c757d;transition:.2s"></i>
+                </div>
+                <div class="card-body p-3" id="citas-aceptadas-body">
+                    <div id="citas-aceptadas-list" style="max-height:400px;overflow-y:auto"></div>
+                </div>
+            </div>
+        </div>
+
+    </div><!-- fin container -->
+
+    <!-- Overlay oscuro detrás del sidebar -->
+    <div class="gp-sidebar-overlay" id="sidebarOverlay" onclick="toggleSidebar()"></div>
+
+    <!-- Sidebar Panel -->
+    <div class="gp-sidebar-panel" id="sidebarPanel">
+        <div class="gp-sidebar-header">
+            <div class="gp-brand"><i class="fas fa-bolt"></i> Global Pro</div>
+            <button class="gp-sidebar-close" onclick="toggleSidebar()"><i class="fas fa-times"></i></button>
+        </div>
+
+        <!-- OPERACIONES TALLER -->
+        <div class="gp-sidebar-section">
+            <div class="gp-sidebar-section-title">Operaciones Taller</div>
+            <a class="gp-sidebar-item gp-colored" style="--c:220,53,69" href="/index.html#crear" data-section="crear">
+                <i class="fas fa-plus-circle"></i> Nueva Orden
+            </a>
+            <a class="gp-sidebar-item gp-colored" style="--c:255,107,0" href="/index.html#express" data-section="express">
+                <i class="fas fa-bolt"></i> Orden Exprés
+            </a>
+            <a class="gp-sidebar-item gp-colored" style="--c:111,66,193" href="/index.html#liquidar" data-section="liquidar">
+                <i class="fas fa-calculator"></i> Liquidar Técnicos
+            </a>
+            <a class="gp-sidebar-item gp-colored" style="--c:13,110,253" href="/index.html#buscar" data-section="buscar">
+                <i class="fas fa-search"></i> Buscar Órdenes
+            </a>
+            <a class="gp-sidebar-item gp-colored" style="--c:32,201,151" href="/index.html#tecnicos" data-section="tecnicos">
+                <i class="fas fa-user-check"></i> Asignar Órdenes
+            </a>
+            <a class="gp-sidebar-item gp-colored" style="--c:23,162,184" href="/index.html#tecnicos" data-section="tecnicos">
+                <i class="fas fa-users"></i> Gestión Técnicos
+            </a>
+            <a class="gp-sidebar-item gp-colored active" style="--c:102,16,242" href="/calendario.html" data-section="calendario">
+                <i class="fas fa-calendar-alt"></i> Calendario
+            </a>
+        </div>
+
+        <div class="gp-sidebar-divider"></div>
+
+        <!-- CATÁLOGOS -->
+        <div class="gp-sidebar-section">
+            <div class="gp-sidebar-section-title">Catálogos</div>
+            <a class="gp-sidebar-item gp-colored" style="--c:230,168,23" href="/index.html" title="Catálogo Servicios">
+                <i class="fas fa-cogs"></i> Catálogo Servicios
+            </a>
+            <a class="gp-sidebar-item gp-colored" style="--c:101,163,13" href="/index.html" title="Modelos Vehículos">
+                <i class="fas fa-car"></i> Modelos Vehículos
+            </a>
+        </div>
+
+        <div class="gp-sidebar-divider"></div>
+
+        <!-- GESTIÓN & FINANZAS -->
+        <div class="gp-sidebar-section">
+            <div class="gp-sidebar-section-title">Gestión & Finanzas</div>
+            <a class="gp-sidebar-item gp-colored" style="--c:16,185,129" href="/index.html#flujo" data-section="flujo">
+                <i class="fas fa-money-bill-wave"></i> Flujo de Caja
+            </a>
+            <a class="gp-sidebar-item gp-colored" style="--c:249,115,22" href="/index.html#gastos" data-section="gastos">
+                <i class="fas fa-receipt"></i> Gastos Operativos
+            </a>
+            <a class="gp-sidebar-item gp-colored" style="--c:14,165,233" href="/index.html#cartera" data-section="cartera">
+                <i class="fas fa-address-book"></i> Cartera Clientes
+            </a>
+            <a class="gp-sidebar-item gp-colored" style="--c:139,92,246" href="/index.html#reporte" data-section="reporte">
+                <i class="fas fa-chart-bar"></i> Reporte General
+            </a>
+        </div>
+
+        <div class="gp-sidebar-divider"></div>
+
+        <!-- CRM & MARKETING -->
+        <div class="gp-sidebar-section">
+            <div class="gp-sidebar-section-title">CRM & Marketing</div>
+            <a class="gp-sidebar-item gp-colored" style="--c:37,211,102" href="/index.html#notificaciones" data-section="notificaciones">
+                <i class="fab fa-whatsapp"></i> Notificaciones
+            </a>
+        </div>
+
+        <div class="gp-sidebar-divider"></div>
+
+        <!-- CONFIGURACIÓN -->
+        <div class="gp-sidebar-section">
+            <div class="gp-sidebar-section-title">Configuración</div>
+            <a class="gp-sidebar-item gp-colored" style="--c:52,168,83" href="#" onclick="event.preventDefault(); abrirModalConfigSheets();">
+                <i class="fas fa-cog"></i> Google Sheets
+            </a>
+            <a class="gp-sidebar-item gp-colored" style="--c:255,200,0" href="#" id="sidebar-item-darkmode" onclick="event.preventDefault(); toggleDarkMode();">
+                <i class="fas fa-moon" id="icon-dark-mode-sidebar"></i> <span id="darkmode-label-sidebar">Modo Oscuro</span>
+            </a>
+            <a class="gp-sidebar-item gp-colored" style="--c:6,182,212" href="#" id="sidebar-item-sonido" onclick="event.preventDefault(); toggleSonidoSidebar();">
+                <i class="fas fa-volume-up" id="icon-sonido-sidebar"></i> <span id="sonido-label-sidebar">Sonido Menú</span>
+            </a>
+        </div>
+
+        <div class="gp-sidebar-divider"></div>
+
+        <!-- SESIÓN -->
+        <div class="gp-sidebar-section">
+            <a class="gp-sidebar-item gp-colored" style="--c:220,53,69" href="#" onclick="event.preventDefault(); doLogout();">
+                <i class="fas fa-sign-out-alt"></i> Cerrar Sesión
+            </a>
+        </div>
+    </div>
+
+    <!-- Botón toggle del sidebar (dos etapas: tab → botón → menú) -->
+    <div class="gp-sidebar">
+        <div class="gp-sidebar-tab" id="sidebarTab" onclick="revealSidebarBtn()" title="Menú"></div>
+        <button class="gp-sidebar-toggle" id="sidebarToggleBtn" onclick="toggleSidebar()" title="Abrir menú">
+            <i class="fas fa-bars"></i>
+        </button>
+    </div>
+
+    <!-- Modal: Calendario - Nuevo/Editar Evento -->
+    <div class="modal fade" id="modalCalendarioEvento" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content" style="border:none;border-radius:18px;overflow:hidden;box-shadow:0 20px 50px rgba(13,110,253,0.2);">
+                <div class="modal-header" style="background:linear-gradient(135deg,#0d6efd 0%,#3d8bfd 100%);border:none;padding:16px 20px;">
+                    <div style="display:flex;align-items:center;gap:10px;">
+                        <i class="fas fa-calendar-plus" style="font-size:1.3rem;color:#fff;"></i>
+                        <span class="modal-title" style="color:#fff;font-weight:800;font-size:1rem;" id="modal-cal-titulo">Nuevo Evento</span>
+                    </div>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body" style="padding:20px;">
+                    <input type="hidden" id="cal-evento-id">
+                    <div class="mb-3">
+                        <label class="form-label"><i class="fas fa-tag me-1" style="color:#0d6efd;"></i>Título</label>
+                        <input type="text" class="form-control" id="cal-titulo" placeholder="Ej: Cambio de aceite - Juan Perez" required>
+                    </div>
+                    <div class="row g-3 mb-3">
+                        <div class="col-md-6">
+                            <label class="form-label"><i class="fas fa-user-cog me-1" style="color:#0d6efd;"></i>Técnico</label>
+                            <select class="form-select" id="cal-tecnico" required>
+                                <option value="">Seleccionar...</option>
+                            </select>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label"><i class="fas fa-wrench me-1" style="color:#0d6efd;"></i>Tipo Servicio</label>
+                            <select class="form-select" id="cal-tipo-servicio">
+                                <option value="taller">Taller</option>
+                                <option value="domicilio">Domicilio</option>
+                                <option value="inspeccion">Inspección</option>
+                                <option value="urgencia">Urgencia</option>
+                                <option value="otro">Otro</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="row g-3 mb-3">
+                        <div class="col-md-6">
+                            <label class="form-label"><i class="fas fa-play me-1" style="color:#28a745;"></i>Inicio</label>
+                            <input type="datetime-local" class="form-control" id="cal-fecha-inicio" required>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label"><i class="fas fa-stop me-1" style="color:#dc3545;"></i>Fin</label>
+                            <input type="datetime-local" class="form-control" id="cal-fecha-fin" required>
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label"><i class="fas fa-link me-1" style="color:#0d6efd;"></i>Orden Asociada (opcional)</label>
+                        <select class="form-select" id="cal-orden-id">
+                            <option value="">Sin orden asociada</option>
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label"><i class="fas fa-clipboard me-1" style="color:#0d6efd;"></i>Observaciones</label>
+                        <textarea class="form-control" id="cal-observaciones" rows="2" placeholder="Notas adicionales..."></textarea>
+                    </div>
+                </div>
+                <div class="modal-footer" style="border-top:1px solid #e9ecef;padding:12px 20px;">
+                    <button type="button" class="btn btn-danger btn-sm" id="cal-btn-eliminar" style="display:none;" onclick="eliminarEventoCalendario()">
+                        <i class="fas fa-trash me-1"></i>Eliminar
+                    </button>
+                    <button type="button" class="btn btn-outline-primary btn-sm" id="cal-btn-ver-ot" style="display:none;" onclick="verOrdenDesdeCalendario()">
+                        <i class="fas fa-eye me-1"></i>Ver OT
+                    </button>
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="button" class="btn btn-primary" id="cal-btn-guardar" onclick="guardarEventoCalendario()">
+                        <i class="fas fa-save me-1"></i>Guardar
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Sonido generado con Web Audio API (sin archivos)
+        function playSidebarSound() {
+            if (localStorage.getItem('gp_sonido_sidebar') === 'off') return;
+            try {
+                const ctx = new (window.AudioContext || window.webkitAudioContext)();
+                const osc = ctx.createOscillator();
+                const gain = ctx.createGain();
+                osc.connect(gain);
+                gain.connect(ctx.destination);
+                osc.type = 'sine';
+                osc.frequency.setValueAtTime(880, ctx.currentTime);
+                osc.frequency.exponentialRampToValueAtTime(1320, ctx.currentTime + 0.08);
+                osc.frequency.exponentialRampToValueAtTime(1760, ctx.currentTime + 0.15);
+                gain.gain.setValueAtTime(0.15, ctx.currentTime);
+                gain.gain.exponentialRampToValueAtTime(0.25, ctx.currentTime + 0.05);
+                gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.3);
+                osc.start(ctx.currentTime);
+                osc.stop(ctx.currentTime + 0.3);
+            } catch(e) {}
+        }
+
+        function toggleSonidoSidebar() {
+            const actual = localStorage.getItem('gp_sonido_sidebar');
+            const nuevo = actual === 'off' ? 'on' : 'off';
+            localStorage.setItem('gp_sonido_sidebar', nuevo);
+            actualizarIconoSonido();
+            if (nuevo === 'on') playSidebarSound();
+        }
+
+        function actualizarIconoSonido() {
+            const icon = document.getElementById('icon-sonido-sidebar');
+            const item = document.getElementById('sidebar-item-sonido');
+            const label = document.getElementById('sonido-label-sidebar');
+            if (!icon) return;
+            if (localStorage.getItem('gp_sonido_sidebar') === 'off') {
+                icon.className = 'fas fa-volume-mute';
+                if (item) item.style.opacity = '0.5';
+                if (label) label.textContent = 'Sonido Apagado';
+            } else {
+                icon.className = 'fas fa-volume-up';
+                if (item) item.style.opacity = '1';
+                if (label) label.textContent = 'Sonido Menú';
+            }
+        }
+
+        // Inicializar icono de sonido al cargar
+        document.addEventListener('DOMContentLoaded', actualizarIconoSonido);
+
+        function revealSidebarBtn() {
+            playSidebarSound();
+            const tab = document.getElementById('sidebarTab');
+            const toggleBtn = document.getElementById('sidebarToggleBtn');
+            if (tab) tab.style.display = 'none';
+            if (toggleBtn) toggleBtn.classList.add('visible');
+        }
+
+        function hideSidebarBtn() {
+            const tab = document.getElementById('sidebarTab');
+            const toggleBtn = document.getElementById('sidebarToggleBtn');
+            if (toggleBtn) toggleBtn.classList.remove('visible');
+            if (tab) tab.style.display = '';
+        }
+
+        function toggleSidebar() {
+            playSidebarSound();
+            const panel = document.getElementById('sidebarPanel');
+            const overlay = document.getElementById('sidebarOverlay');
+            if (!panel) return;
+            const isOpen = panel.classList.toggle('open');
+            if (overlay) overlay.classList.toggle('show', isOpen);
+            if (!isOpen) {
+                // Al cerrar el sidebar, ocultar el botón y mostrar el tab
+                hideSidebarBtn();
+            }
+        }
+
+        function sidebarNav(seccion) {
+            event.preventDefault();
+            // Cerrar sidebar
+            const panel = document.getElementById('sidebarPanel');
+            const overlay = document.getElementById('sidebarOverlay');
+            if (panel) panel.classList.remove('open');
+            if (overlay) overlay.classList.remove('show');
+            hideSidebarBtn();
+
+            // Navegar a la página correspondiente
+            if (seccion === 'calendario') {
+                window.location.href = '/calendario.html';
+            } else {
+                window.location.href = '/index.html#' + seccion;
+            }
+        }
+
+        function sidebarNavTab(tabId) {
+            event.preventDefault();
+            // Cerrar sidebar
+            const panel = document.getElementById('sidebarPanel');
+            const overlay = document.getElementById('sidebarOverlay');
+            if (panel) panel.classList.remove('open');
+            if (overlay) overlay.classList.remove('show');
+            hideSidebarBtn();
+
+            // Navegar a index.html con la sección liquidar (donde están los tabs)
+            window.location.href = '/index.html#liquidar';
+        }
+    </script>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+    <!-- Leaflet JS (mapa para seleccionar ubicacion en OT Express) -->
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script src="app.js"></script>
+    <script>
+        // Override mostrarApp para auto-inicializar el calendario DESPUÉS de cargar app.js
+        (function() {
+            var _origMostrarApp = mostrarApp;
+            window.mostrarApp = function() {
+                _origMostrarApp();
+                // Auto-init calendar after login
+                setTimeout(function() {
+                    if (typeof inicializarCalendario === 'function') {
+                        inicializarCalendario();
+                    }
+                }, 300);
+            };
+            // Si ya está logueado, ejecutar ahora
+            if (localStorage.getItem('gp_admin_token')) {
+                inicializarCalendario();
+            }
+        })();
+    </script>
+    </div><!-- fin main-app -->
+</body>
+</html>

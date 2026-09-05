@@ -1,0 +1,463 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Admin Servicios — GlobalPro Citas</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Segoe UI',system-ui,-apple-system,sans-serif;background:#0a0f1a;color:#e0e0e0;min-height:100vh}
+.header{background:linear-gradient(135deg,#16a34a,#15803d);padding:20px 30px;display:flex;justify-content:space-between;align-items:center}
+.header h1{color:#fff;font-size:22px;font-weight:700}
+.header a{color:#fff;text-decoration:none;background:rgba(255,255,255,.15);padding:8px 16px;border-radius:8px;font-size:14px;transition:.2s}
+.header a:hover{background:rgba(255,255,255,.25)}
+.container{max-width:1100px;margin:0 auto;padding:24px 20px}
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:16px;margin-bottom:24px}
+.stat-card{background:#141b2d;border:1px solid #1e293b;border-radius:12px;padding:18px;text-align:center}
+.stat-card .num{font-size:28px;font-weight:700;color:#16a34a}
+.stat-card .label{font-size:13px;color:#8892a4;margin-top:4px}
+.toolbar{display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;flex-wrap:wrap;gap:12px}
+.toolbar h2{font-size:18px;color:#fff}
+.btn{padding:10px 20px;border:none;border-radius:8px;cursor:pointer;font-size:14px;font-weight:600;transition:.2s;display:inline-flex;align-items:center;gap:6px}
+.btn-primary{background:#16a34a;color:#fff}.btn-primary:hover{background:#15803d}
+.btn-warning{background:#f59e0b;color:#fff}.btn-warning:hover{background:#d97706}
+.btn-sm{padding:6px 12px;font-size:12px;border-radius:6px}
+.btn-edit{background:#2563eb;color:#fff}.btn-edit:hover{background:#1d4ed8}
+.btn-delete{background:#dc2626;color:#fff}.btn-delete:hover{background:#b91c1c}
+.btn-toggle{background:#6b7280;color:#fff}.btn-toggle:hover{background:#4b5563}
+.btn-cancel{background:#6b7280;color:#fff}.btn-cancel:hover{background:#4b5563}
+.filter-bar{display:flex;gap:10px;margin-bottom:16px;flex-wrap:wrap}
+.filter-bar select,.filter-bar input{background:#141b2d;border:1px solid #1e293b;color:#e0e0e0;padding:8px 14px;border-radius:8px;font-size:14px}
+table{width:100%;border-collapse:collapse;background:#141b2d;border-radius:12px;overflow:hidden;border:1px solid #1e293b}
+thead{background:#1e293b}
+th{padding:12px 14px;text-align:left;font-size:13px;color:#8892a4;font-weight:600;text-transform:uppercase;letter-spacing:.5px}
+td{padding:12px 14px;font-size:14px;border-top:1px solid #1e293b}
+tr:hover td{background:#1a2438}
+.badge{padding:4px 10px;border-radius:20px;font-size:12px;font-weight:600}
+.badge-green{background:#16a34a22;color:#16a34a}
+.badge-gray{background:#6b728022;color:#9ca3af}
+.badge-blue{background:#2563eb22;color:#60a5fa}
+.badge-orange{background:#f59e0b22;color:#fbbf24}
+.badge-purple{background:#8b5cf622;color:#a78bfa}
+.badge-gold{background:#eab30822;color:#facc15}
+.precio{font-weight:700;color:#16a34a}
+.actions{display:flex;gap:6px;flex-wrap:wrap}
+.empty{text-align:center;padding:40px;color:#6b7280;font-size:15px}
+.numero-orden{display:inline-flex;align-items:center;justify-content:center;width:28px;height:28px;border-radius:50%;background:#16a34a;color:#fff;font-weight:700;font-size:12px;margin-right:4px}
+
+/* Modal */
+.modal-overlay{display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,.6);z-index:1000;justify-content:center;align-items:center}
+.modal-overlay.active{display:flex}
+.modal{background:#1a2332;border:1px solid #1e293b;border-radius:16px;width:95%;max-width:520px;padding:28px;max-height:90vh;overflow-y:auto}
+.modal h2{color:#fff;font-size:20px;margin-bottom:20px}
+.form-group{margin-bottom:16px}
+.form-group label{display:block;color:#8892a4;font-size:13px;margin-bottom:6px;font-weight:600}
+.form-group input,.form-group select,.form-group textarea{width:100%;background:#0a0f1a;border:1px solid #1e293b;color:#e0e0e0;padding:10px 14px;border-radius:8px;font-size:14px}
+.form-group input:focus,.form-group select:focus,.form-group textarea:focus{outline:none;border-color:#16a34a}
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.modal-actions{display:flex;gap:10px;justify-content:flex-end;margin-top:20px}
+
+/* Toast */
+.toast{position:fixed;bottom:20px;right:20px;background:#16a34a;color:#fff;padding:14px 24px;border-radius:10px;font-size:14px;font-weight:600;transform:translateY(100px);opacity:0;transition:.3s;z-index:2000}
+.toast.show{transform:translateY(0);opacity:1}
+.toast.error{background:#dc2626}
+.toast.warning{background:#f59e0b;color:#000}
+
+/* Base services preview */
+.base-preview{background:#141b2d;border:1px solid #1e293b;border-radius:12px;padding:20px;margin-bottom:24px}
+.base-preview h3{color:#16a34a;font-size:16px;margin-bottom:12px}
+.base-preview table{margin-top:8px}
+.base-preview .precio{color:#facc15}
+
+@media(max-width:600px){
+  table{font-size:12px}
+  th,td{padding:8px 6px}
+  .form-row{grid-template-columns:1fr}
+  .header h1{font-size:18px}
+  .btn{font-size:13px;padding:8px 14px}
+}
+</style>
+</head>
+<body>
+
+<div class="header">
+  <h1>🔧 Admin Servicios — GlobalPro Citas</h1>
+  <div class="header-nav" style="display:flex;gap:10px">
+    <a href="/">💬 Chat</a>
+    <a href="/admin" style="background:rgba(255,255,255,.35);font-weight:700">🔧 Servicios</a>
+    <a href="/ordenes">📋 Órdenes</a>
+  </div>
+</div>
+
+<div class="container">
+  <!-- Stats -->
+  <div class="stats" id="stats"></div>
+
+  <!-- Base Services Preview -->
+  <div class="base-preview">
+    <h3>📋 Servicios Base del Bot IA (numerados para el chat)</h3>
+    <table>
+      <thead><tr><th>#</th><th>Servicio</th><th>Precio Ref.</th><th>En BD</th></tr></thead>
+      <tbody>
+        <tr><td><span class="numero-orden">1</span></td><td>Cambio de Aceite</td><td class="precio">$15.000</td><td id="check1">—</td></tr>
+        <tr><td><span class="numero-orden">2</span></td><td>Revisión General</td><td class="precio">$25.000</td><td id="check2">—</td></tr>
+        <tr><td><span class="numero-orden">3</span></td><td>Scanner Diagnóstico</td><td class="precio">$20.000</td><td id="check3">—</td></tr>
+        <tr><td><span class="numero-orden">4</span></td><td>Frenos</td><td class="precio">$35.000</td><td id="check4">—</td></tr>
+        <tr><td><span class="numero-orden">5</span></td><td>Revisión Eléctrica</td><td class="precio">$20.000</td><td id="check5">—</td></tr>
+        <tr><td><span class="numero-orden">6</span></td><td>Aire Acondicionado</td><td class="precio">$25.000</td><td id="check6">—</td></tr>
+        <tr><td><span class="numero-orden">7</span></td><td>Revisión Técnica</td><td class="precio">$30.000</td><td id="check7">—</td></tr>
+        <tr><td><span class="numero-orden">8</span></td><td>Servicio a Domicilio</td><td class="precio">$50.000</td><td id="check8">—</td></tr>
+        <tr><td><span class="numero-orden">9</span></td><td>Otro</td><td class="precio">—</td><td id="check9">—</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Toolbar -->
+  <div class="toolbar">
+    <h2>Todos los Servicios</h2>
+    <div style="display:flex;gap:10px;flex-wrap:wrap">
+      <select id="filterCat" onchange="loadServicios()"><option value="">Todas las categorías</option></select>
+      <select id="filterOrigen" onchange="loadServicios()">
+        <option value="">Todos los orígenes</option>
+        <option value="citas">Opción 1 (Citas)</option>
+        <option value="sgc-ordenes">Opción 2 (SGC)</option>
+        <option value="manual">Manual</option>
+        <option value="base">Base (Bot IA)</option>
+      </select>
+      <button class="btn btn-warning" onclick="seedBaseServices()">🔄 Cargar/Actualizar Servicios Base</button>
+      <button class="btn btn-primary" onclick="openModal()">+ Nuevo Servicio</button>
+    </div>
+  </div>
+
+  <!-- Table -->
+  <div id="tableContainer"></div>
+</div>
+
+<!-- Modal Create/Edit -->
+<div class="modal-overlay" id="modalOverlay" onclick="if(event.target===this)closeModal()">
+  <div class="modal">
+    <h2 id="modalTitle">Nuevo Servicio</h2>
+    <input type="hidden" id="editId">
+    <div class="form-group">
+      <label>Nombre del servicio *</label>
+      <input type="text" id="fNombre" placeholder="Ej: Cambio de Aceite">
+    </div>
+    <div class="form-group">
+      <label>Descripción</label>
+      <textarea id="fDesc" rows="2" placeholder="Descripción breve del servicio"></textarea>
+    </div>
+    <div class="form-row">
+      <div class="form-group">
+        <label>Categoría</label>
+        <select id="fCat">
+          <option value="Diagnóstico">Diagnóstico</option>
+          <option value="Mantenimiento">Mantenimiento</option>
+          <option value="Reparación">Reparación</option>
+          <option value="Servicio Especial">Servicio Especial</option>
+          <option value="General">General</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label>Precio (CLP)</label>
+        <input type="number" id="fPrecio" placeholder="15000" min="0">
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="form-group">
+        <label>Duración (minutos)</label>
+        <input type="number" id="fDuracion" placeholder="60" min="5">
+      </div>
+      <div class="form-group">
+        <label>Orden</label>
+        <input type="number" id="fOrden" placeholder="1" min="0">
+      </div>
+    </div>
+    <div class="form-group">
+      <label>
+        <input type="checkbox" id="fActivo" checked style="margin-right:8px">
+        Servicio activo (visible en el chat)
+      </label>
+    </div>
+    <div class="modal-actions">
+      <button class="btn btn-cancel" onclick="closeModal()">Cancelar</button>
+      <button class="btn btn-primary" onclick="saveServicio()">Guardar</button>
+    </div>
+  </div>
+</div>
+
+<!-- Toast -->
+<div class="toast" id="toast"></div>
+
+<script>
+const API = '/api/admin/servicios';
+
+const BASE_SERVICES = [
+  { nombre: 'Cambio de Aceite', descripcion: 'Cambio de aceite de motor y filtro', categoria: 'Mantenimiento', precio: 15000, duracion_minutos: 30, orden: 1 },
+  { nombre: 'Revisión General', descripcion: 'Revisión completa del vehículo', categoria: 'Mantenimiento', precio: 25000, duracion_minutos: 60, orden: 2 },
+  { nombre: 'Scanner Diagnóstico', descripcion: 'Diagnóstico computarizado de fallas', categoria: 'Diagnóstico', precio: 20000, duracion_minutos: 45, orden: 3 },
+  { nombre: 'Frenos', descripcion: 'Revisión y reparación de frenos', categoria: 'Reparación', precio: 35000, duracion_minutos: 90, orden: 4 },
+  { nombre: 'Revisión Eléctrica', descripcion: 'Diagnóstico del sistema eléctrico', categoria: 'Diagnóstico', precio: 20000, duracion_minutos: 60, orden: 5 },
+  { nombre: 'Aire Acondicionado', descripcion: 'Revisión y carga de aire acondicionado', categoria: 'Servicio Especial', precio: 25000, duracion_minutos: 60, orden: 6 },
+  { nombre: 'Revisión Técnica', descripcion: 'Inspección técnica del vehículo', categoria: 'Servicio Especial', precio: 30000, duracion_minutos: 45, orden: 7 },
+  { nombre: 'Servicio a Domicilio', descripcion: 'Traslado y atención a domicilio (costo fijo)', categoria: 'Servicio Especial', precio: 50000, duracion_minutos: 120, orden: 8 },
+  { nombre: 'Otro', descripcion: 'Otro servicio no listado (el cliente especifica)', categoria: 'General', precio: 0, duracion_minutos: 60, orden: 9 },
+];
+
+async function seedBaseServices() {
+  if (!confirm('Esto actualizará/creará los 9 servicios base del Bot IA en el orden correcto. ¿Continuar?')) return;
+  
+  try {
+    for (const s of BASE_SERVICES) {
+      // Check if service exists by name
+      const res = await fetch(API);
+      const data = await res.json();
+      const existing = data.servicios.find(x => x.nombre === s.nombre);
+      
+      if (existing) {
+        // Update existing service with base data
+        await fetch(`${API}/${existing.id}`, {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            nombre: s.nombre,
+            descripcion: s.descripcion,
+            categoria: s.categoria,
+            precio: s.precio,
+            duracion_minutos: s.duracion_minutos,
+            orden: s.orden,
+            activo: 1,
+          })
+        });
+      } else {
+        // Create new
+        await fetch(API, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            ...s,
+            activo: 1,
+            origen: 'base',
+          })
+        });
+      }
+    }
+    
+    showToast('Servicios base actualizados correctamente');
+    loadServicios();
+  } catch (err) {
+    showToast('Error al actualizar servicios base', true);
+    console.error(err);
+  }
+}
+
+async function loadServicios() {
+  const filterCat = document.getElementById('filterCat').value;
+  const filterOrigen = document.getElementById('filterOrigen').value;
+
+  try {
+    const res = await fetch(API);
+    const data = await res.json();
+    if (!data.success) return;
+
+    let servicios = data.servicios || [];
+
+    // Apply filters
+    if (filterCat) servicios = servicios.filter(s => s.categoria === filterCat);
+    if (filterOrigen) servicios = servicios.filter(s => s.origen === filterOrigen);
+
+    renderStats(data.servicios || []);
+    renderTable(servicios);
+    populateFilterCats(data.servicios || []);
+    checkBaseServices(data.servicios || []);
+  } catch (err) {
+    console.error(err);
+    document.getElementById('tableContainer').innerHTML = '<div class="empty">Error al cargar servicios</div>';
+  }
+}
+
+function checkBaseServices(servicios) {
+  const baseNames = BASE_SERVICES.map(s => s.nombre);
+  baseNames.forEach((name, i) => {
+    const el = document.getElementById('check' + (i + 1));
+    if (!el) return;
+    const found = servicios.find(s => s.nombre === name && s.activo === 1);
+    if (found) {
+      el.innerHTML = '<span class="badge badge-green">✓ Activo</span>';
+    } else {
+      const inactive = servicios.find(s => s.nombre === name);
+      if (inactive) {
+        el.innerHTML = '<span class="badge badge-gray">Inactivo</span>';
+      } else {
+        el.innerHTML = '<span class="badge badge-orange">No existe</span>';
+      }
+    }
+  });
+}
+
+function renderStats(servicios) {
+  const activos = servicios.filter(s => s.activo === 1).length;
+  const inactivos = servicios.filter(s => s.activo !== 1).length;
+  const catSet = new Set(servicios.map(s => s.categoria));
+  const totalPrecio = servicios.filter(s => s.activo === 1 && s.precio > 0).length;
+  const baseCount = servicios.filter(s => s.origen === 'base' && s.activo === 1).length;
+
+  document.getElementById('stats').innerHTML = `
+    <div class="stat-card"><div class="num">${servicios.length}</div><div class="label">Total servicios</div></div>
+    <div class="stat-card"><div class="num">${activos}</div><div class="label">Activos</div></div>
+    <div class="stat-card"><div class="num">${baseCount}/9</div><div class="label">Base activos</div></div>
+    <div class="stat-card"><div class="num">${catSet.size}</div><div class="label">Categorías</div></div>
+    <div class="stat-card"><div class="num">${totalPrecio}</div><div class="label">Con precio publicado</div></div>
+  `;
+}
+
+function populateFilterCats(servicios) {
+  const sel = document.getElementById('filterCat');
+  const current = sel.value;
+  const cats = [...new Set(servicios.map(s => s.categoria))].sort();
+  const opts = '<option value="">Todas las categorías</option>' + cats.map(c => `<option value="${c}" ${c === current ? 'selected' : ''}>${c}</option>`).join('');
+  sel.innerHTML = opts;
+}
+
+function renderTable(servicios) {
+  if (!servicios.length) {
+    document.getElementById('tableContainer').innerHTML = '<div class="empty">No hay servicios que coincidan con el filtro</div>';
+    return;
+  }
+
+  let html = `<table><thead><tr>
+    <th>Orden</th><th>Servicio</th><th>Categoría</th><th>Precio</th><th>Duración</th><th>Origen</th><th>Estado</th><th>Acciones</th>
+  </tr></thead><tbody>`;
+
+  servicios.forEach((s, i) => {
+    const precio = s.precio > 0 ? `$${Number(s.precio).toLocaleString('es-CL')}` : '<span style="color:#6b7280">Sin precio</span>';
+    const catClass = {'Diagnóstico':'badge-blue','Mantenimiento':'badge-green','Reparación':'badge-orange','Servicio Especial':'badge-purple','General':'badge-gray'}[s.categoria] || 'badge-gray';
+    const origLabel = {'citas':'Citas','sgc-ordenes':'SGC','manual':'Manual','base':'Base'}[s.origen] || s.origen;
+    const origClass = {'base':'badge-gold','citas':'badge-green','sgc-ordenes':'badge-blue','manual':'badge-gray'}[s.origen] || 'badge-gray';
+    const estadoBadge = s.activo === 1 ? '<span class="badge badge-green">Activo</span>' : '<span class="badge badge-gray">Inactivo</span>';
+    const isBase = BASE_SERVICES.some(b => b.nombre === s.nombre);
+
+    html += `<tr style="${isBase ? 'border-left: 3px solid #16a34a;' : ''}">
+      <td><span class="numero-orden">${s.orden || i+1}</span></td>
+      <td><strong>${s.nombre}</strong><br><small style="color:#6b7280">${s.descripcion || '—'}</small></td>
+      <td><span class="badge ${catClass}">${s.categoria}</span></td>
+      <td class="precio">${precio}</td>
+      <td>${s.duracion_minutos} min</td>
+      <td><span class="badge ${origClass}">${origLabel}</span></td>
+      <td>${estadoBadge}</td>
+      <td class="actions">
+        <button class="btn btn-sm btn-edit" onclick="editServicio(${s.id})">Editar</button>
+        <button class="btn btn-sm btn-toggle" onclick="toggleServicio(${s.id}, ${s.activo})">${s.activo === 1 ? 'Desactivar' : 'Activar'}</button>
+        <button class="btn btn-sm btn-delete" onclick="deleteServicio(${s.id}, '${s.nombre.replace(/'/g, "\\'")}')">Eliminar</button>
+      </td>
+    </tr>`;
+  });
+
+  html += '</tbody></table>';
+  document.getElementById('tableContainer').innerHTML = html;
+}
+
+function openModal(id = null) {
+  document.getElementById('modalOverlay').classList.add('active');
+  document.getElementById('modalTitle').textContent = id ? 'Editar Servicio' : 'Nuevo Servicio';
+  document.getElementById('editId').value = id || '';
+
+  if (!id) {
+    document.getElementById('fNombre').value = '';
+    document.getElementById('fDesc').value = '';
+    document.getElementById('fCat').value = 'General';
+    document.getElementById('fPrecio').value = '';
+    document.getElementById('fDuracion').value = '60';
+    document.getElementById('fOrden').value = '';
+    document.getElementById('fActivo').checked = true;
+  }
+}
+
+function closeModal() {
+  document.getElementById('modalOverlay').classList.remove('active');
+}
+
+async function editServicio(id) {
+  try {
+    const res = await fetch(API);
+    const data = await res.json();
+    const s = data.servicios.find(x => x.id === id);
+    if (!s) return;
+
+    openModal(id);
+    document.getElementById('fNombre').value = s.nombre;
+    document.getElementById('fDesc').value = s.descripcion || '';
+    document.getElementById('fCat').value = s.categoria || 'General';
+    document.getElementById('fPrecio').value = s.precio || '';
+    document.getElementById('fDuracion').value = s.duracion_minutos || 60;
+    document.getElementById('fOrden').value = s.orden || '';
+    document.getElementById('fActivo').checked = s.activo === 1;
+  } catch (err) { console.error(err); }
+}
+
+async function saveServicio() {
+  const id = document.getElementById('editId').value;
+  const body = {
+    nombre: document.getElementById('fNombre').value.trim(),
+    descripcion: document.getElementById('fDesc').value.trim(),
+    categoria: document.getElementById('fCat').value,
+    precio: parseInt(document.getElementById('fPrecio').value) || 0,
+    duracion_minutos: parseInt(document.getElementById('fDuracion').value) || 60,
+    orden: parseInt(document.getElementById('fOrden').value) || 0,
+    activo: document.getElementById('fActivo').checked ? 1 : 0,
+  };
+
+  if (!body.nombre) { showToast('El nombre es obligatorio', true); return; }
+
+  try {
+    const method = id ? 'PUT' : 'POST';
+    const url = id ? `${API}/${id}` : API;
+    const res = await fetch(url, { method, headers: {'Content-Type':'application/json'}, body: JSON.stringify(body) });
+    const data = await res.json();
+
+    if (data.success) {
+      showToast(id ? 'Servicio actualizado' : 'Servicio creado');
+      closeModal();
+      loadServicios();
+    } else {
+      showToast(data.error || 'Error al guardar', true);
+    }
+  } catch (err) {
+    showToast('Error de conexión', true);
+    console.error(err);
+  }
+}
+
+async function toggleServicio(id, current) {
+  try {
+    const res = await fetch(`${API}/${id}`, {
+      method: 'PUT',
+      headers: {'Content-Type':'application/json'},
+      body: JSON.stringify({ activo: current === 1 ? 0 : 1 })
+    });
+    const data = await res.json();
+    if (data.success) { loadServicios(); showToast(current === 1 ? 'Servicio desactivado' : 'Servicio activado'); }
+  } catch (err) { console.error(err); }
+}
+
+async function deleteServicio(id, nombre) {
+  if (!confirm(`¿Eliminar "${nombre}"? Esta acción no se puede deshacer.`)) return;
+  try {
+    const res = await fetch(`${API}/${id}`, { method: 'DELETE' });
+    const data = await res.json();
+    if (data.success) { loadServicios(); showToast('Servicio eliminado'); }
+  } catch (err) { console.error(err); }
+}
+
+function showToast(msg, isError = false) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.className = 'toast' + (isError ? ' error' : '');
+  setTimeout(() => t.classList.add('show'), 10);
+  setTimeout(() => t.classList.remove('show'), 3000);
+}
+
+// Init
+loadServicios();
+</script>
+</body>
+</html>
