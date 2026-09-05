@@ -1,6 +1,6 @@
 // ============================================
 // API: CANCELAR ORDEN
-// Global Pro Automotriz
+// SGC
 // ============================================
 
 export async function onRequestPost(context) {

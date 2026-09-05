@@ -1,6 +1,6 @@
 // ============================================
 // API: LIBERAR ORDEN DE TRABAJO
-// Global Pro Automotriz
+// SGC
 // POST: Des-asigna técnico y resetea estado de la OT
 // para que quede libre para reasignación
 // ============================================

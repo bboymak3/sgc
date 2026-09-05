@@ -2,7 +2,7 @@
 // API: MIGRACIÓN AUTOMÁTICA
 // Crea las tablas CostosAdicionales y GastosNegocio si no existen
 // FIX: Eliminar CHECK constraint restrictivo en OrdenesTrabajo.estado
-// Global Pro Automotriz
+// SGC
 // ============================================
 
 export async function onRequestGet(context) {

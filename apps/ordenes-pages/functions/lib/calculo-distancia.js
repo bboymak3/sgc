@@ -1,6 +1,6 @@
 // ============================================
 // LIB: CALCULO DE DISTANCIA Y CARGO POR DOMICILIO
-// Global Pro Automotriz
+// SGC
 // - Usa OSRM (gratis, sin API key) para distancia real por carretera
 // - Fallback a Haversine (linea recta * 1.3) si OSRM falla
 // ============================================

@@ -1,6 +1,6 @@
 // ============================================
 // API: OBTENER FOTOS DE UNA ORDEN
-// Global Pro Automotriz
+// SGC
 // GET: ?orden_id=X
 // Devuelve URLs que apuntan a /api/imagen?key=...
 // ============================================

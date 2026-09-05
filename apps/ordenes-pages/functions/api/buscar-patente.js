@@ -1,6 +1,6 @@
 // ============================================
 // API: BUSCAR VEHÍCULO POR PATENTE
-// Global Pro Automotriz
+// SGC
 // ============================================
 
 export async function onRequestGet(context) {

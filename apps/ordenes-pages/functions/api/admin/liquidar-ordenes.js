@@ -4,7 +4,7 @@
 // Los datos se guardan en tabla LiquidacionOrden
 // Luego Liquidar Técnicos lee de esta tabla para sumar al total
 // FIX: Pre-calcular base comisionable por técnico desde items con tecnico_id
-// Global Pro Automotriz
+// SGC
 // ============================================
 
 import { asegurarColumnasFaltantes, getColumnas, buildFechaWhere } from '../../lib/db-helpers.js';

@@ -1,6 +1,6 @@
 // ============================================
 // API: OBTENER ÓRDENES DEL TÉCNICO
-// Global Pro Automotriz
+// SGC
 // ============================================
 
 import { asegurarColumnasFaltantes, getFechaColumn } from '../../lib/db-helpers.js';

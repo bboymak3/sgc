@@ -1,6 +1,6 @@
 // ============================================
 // API: LOGIN DE TÉCNICOS
-// Global Pro Automotriz
+// SGC
 // Detecta automáticamente si la columna es 'pin' o 'codigo_acceso'
 // ============================================
 

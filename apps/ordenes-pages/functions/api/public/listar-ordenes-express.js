@@ -1,7 +1,7 @@
 // ============================================
 // API PUBLICA READ-ONLY: Listar órdenes express
 // Solo lectura - no modifica nada
-// Global Pro Automotriz
+// SGC
 // ============================================
 
 const ALLOWED_ORIGINS = [

@@ -8,7 +8,7 @@
 //   - Si un item tiene tecnico_id, solo suma a ese técnico
 //   - Si un item NO tiene tecnico_id (órdenes antiguas), se asigna al tecnico_asignado_id
 //   - Busca órdenes donde el técnico tenga items asignados (no solo tecnico_asignado_id)
-// Global Pro Automotriz
+// SGC
 // ============================================
 
 import { asegurarColumnasFaltantes, getColumnas, buildFechaWhere } from '../../lib/db-helpers.js';

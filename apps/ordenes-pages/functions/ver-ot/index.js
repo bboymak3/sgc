@@ -62,7 +62,7 @@ function getHTMLResponse(titulo, mensaje, esExito) {
     '<head>' +
     '<meta charset="UTF-8">' +
     '<meta name="viewport" content="width=device-width, initial-scale=1.0">' +
-    '<title>' + titulo + ' - Global Pro Automotriz</title>' +
+    '<title>' + titulo + ' - SGC</title>' +
     '<script src="https://cdn.tailwindcss.com"><\/script>' +
     '</head>' +
     '<body class="bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center min-h-screen p-4">' +
@@ -314,7 +314,7 @@ function generateOTViewerPage(orden, numeroFormateado, token, costosAdicionales,
   html += '<head>';
   html += '<meta charset="UTF-8">';
   html += '<meta name="viewport" content="width=device-width, initial-scale=1.0">';
-  html += '<title>Orden de Trabajo #' + numeroFormateado + ' - Global Pro Automotriz</title>';
+  html += '<title>Orden de Trabajo #' + numeroFormateado + ' - SGC</title>';
   html += '<script src="https://cdn.tailwindcss.com"><\/script>';
   html += '<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">';
   html += '<style>';
@@ -325,12 +325,12 @@ function generateOTViewerPage(orden, numeroFormateado, token, costosAdicionales,
   html += '<div class="max-w-2xl mx-auto">';
 
   // Banner
-  html += '<img src="/banner.jpeg" alt="Global Pro Automotriz" style="width:100%;max-width:600px;height:auto;display:block;margin:0 auto;border-radius:12px 12px 0 0;box-shadow:0 4px 15px rgba(0,0,0,0.15);">';
+  html += '<img src="/banner.jpeg" alt="SGC" style="width:100%;max-width:600px;height:auto;display:block;margin:0 auto;border-radius:12px 12px 0 0;box-shadow:0 4px 15px rgba(0,0,0,0.15);">';
 
   // Header card
   html += '<div class="bg-white shadow-2xl overflow-hidden">';
   html += '<div class="bg-gradient-to-r from-red-800 to-red-600 p-4 text-center">';
-  html += '<h1 class="text-white text-2xl font-black">GLOBAL PRO AUTOMOTRIZ</h1>';
+  html += '<h1 class="text-white text-2xl font-black">SGC</h1>';
   html += '<p class="text-red-200 text-sm">ORDEN DE TRABAJO #' + numeroFormateado + '</p>';
   html += '</div>';
   html += '</div>';
@@ -377,10 +377,10 @@ function generateOTViewerPage(orden, numeroFormateado, token, costosAdicionales,
   html += '<div class="bg-red-50 border border-red-200 rounded-xl p-4 mb-6">';
   html += '<h3 class="font-bold text-lg mb-2 text-red-800">🏢 Información del Taller</h3>';
   html += '<div class="grid grid-cols-1 gap-1 text-sm">';
-  html += '<p class="text-gray-700"><strong>Empresa:</strong> Global Pro Automotriz</p>';
+  html += '<p class="text-gray-700"><strong>Empresa:</strong> SGC</p>';
   html += '<p class="text-gray-700"><strong>Dirección:</strong> Padre Alberto Hurtado 3596, Pedro Aguirre Cerda</p>';
   html += '<p class="text-gray-700"><strong>Contactos:</strong> +56 9 3902 6185</p>';
-  html += '<p class="text-gray-700"><strong>RRSS:</strong> @globalproautomotriz</p>';
+  html += '<p class="text-gray-700"><strong>RRSS:</strong> @sgc</p>';
   html += '</div>';
   html += '</div>';
 
@@ -486,7 +486,7 @@ function generateOTViewerPage(orden, numeroFormateado, token, costosAdicionales,
   // Header
   html += '  doc.setFontSize(8); doc.setTextColor(128,128,128); doc.text("OT #" + numeroFormateado, pageWidth - 15, 10, { align: "right" });';
   html += '  doc.setFontSize(16); doc.setTextColor(168,0,0); doc.text("ORDEN DE TRABAJO", pageWidth / 2, yPos, { align: "center" }); yPos += 8;';
-  html += '  doc.setFontSize(10); doc.text("GLOBAL PRO AUTOMOTRIZ", pageWidth / 2, yPos, { align: "center" }); yPos += 10;';
+  html += '  doc.setFontSize(10); doc.text("SGC", pageWidth / 2, yPos, { align: "center" }); yPos += 10;';
   // Section 1: Info
   html += '  doc.setTextColor(0,0,0); doc.setFontSize(9); doc.setFont(undefined, "bold"); doc.text("1. INFORMACION", leftMargin, yPos); yPos += 6; doc.setFont(undefined, "normal"); doc.setFontSize(7);';
   html += '  doc.text("Cliente: " + (ordenData.cliente_nombre || "N/A") + " | RUT: " + (ordenData.cliente_rut || "N/A"), leftMargin, yPos); yPos += 4;';

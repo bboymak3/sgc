@@ -1,6 +1,6 @@
 // ============================================
 // API: EDITAR ORDEN DE TRABAJO
-// Global Pro Automotriz
+// SGC
 // Actualización dinámica: solo actualiza columnas que existen
 // ============================================
 

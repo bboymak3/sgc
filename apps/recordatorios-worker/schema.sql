@@ -1,5 +1,5 @@
 -- =============================================================
--- SISTEMA DE FIDELIZACION - GLOBAL PRO AUTOMOTRIZ
+-- SISTEMA DE FIDELIZACION - SGC
 -- Tabla: recordatorios_revision
 -- Base de datos: sgc_ordenes_db (D1)
 -- =============================================================

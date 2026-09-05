@@ -1,6 +1,6 @@
 // ============================================
 // API: ÓRDENES DISPONIBLES PARA ASIGNACIÓN
-// Global Pro Automotriz
+// SGC
 // ============================================
 
 import { asegurarColumnasFaltantes } from '../../lib/db-helpers.js';

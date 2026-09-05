@@ -1,8 +1,8 @@
-# Global Pro Automotriz - Sistema de Gestion de Taller
+# SGC - Sistema de Gestion de Taller
 
 Sistema integral de gestion de ordenes de trabajo para talleres mecanicos con gestion de tecnicos, facturacion, notificaciones WhatsApp, GPS, firma digital, generacion de PDF, cierre masivo de ordenes, liquidacion por tecnico y mas.
 
-Desarrollado para [Global Pro Automotriz](https://sgc-ordenes.pages.dev/) y desplegado en Cloudflare Pages.
+Desarrollado para [SGC](https://sgc-ordenes.pages.dev/) y desplegado en Cloudflare Pages.
 
 ---
 
@@ -34,7 +34,7 @@ Desarrollado para [Global Pro Automotriz](https://sgc-ordenes.pages.dev/) y desp
 
 ## Descripcion General
 
-Global Pro Automotriz es una plataforma web completa que digitaliza y automatiza la operacion de un taller mecanico. El sistema permite crear ordenes de trabajo, asignarlas a tecnicos, rastrear el progreso en tiempo real via GPS, gestionar cobros y comisiones, enviar notificaciones automaticas por WhatsApp, capturar firmas digitales de los clientes y generar documentos PDF profesionales.
+SGC es una plataforma web completa que digitaliza y automatiza la operacion de un taller mecanico. El sistema permite crear ordenes de trabajo, asignarlas a tecnicos, rastrear el progreso en tiempo real via GPS, gestionar cobros y comisiones, enviar notificaciones automaticas por WhatsApp, capturar firmas digitales de los clientes y generar documentos PDF profesionales.
 
 La plataforma consta de tres interfaces: un panel administrativo web para el recepcionista/administrador, una app movil progresiva (PWA) para los tecnicos en terreno, y paginas web publicas donde los clientes pueden aprobar y firmar sus ordenes desde cualquier dispositivo.
 
@@ -651,7 +651,7 @@ Este campo en `OrdenesTrabajo` es clave para el sistema de comisiones. Cada item
 ## Estructura del Proyecto
 
 ```
-globalprov2/
+sgc-ordenes/
 ├── index.html                          # Panel administrativo (HTML)
 ├── app.js                              # Panel administrativo (logica JS, ~9100 lineas)
 ├── banner.jpeg                         # Banner del taller
@@ -744,8 +744,8 @@ globalprov2/
 
 1. **Clonar el repositorio**
    ```bash
-   git clone https://github.com/bboymak3/Globalprov2.git
-   cd Globalprov2
+   git clone https://github.com/bboymak3/SGC-Ordenes.git
+   cd SGC-Ordenes
    ```
 
 2. **Instalar dependencias**
@@ -755,20 +755,20 @@ globalprov2/
 
 3. **Crear base de datos D1**
    ```bash
-   npx wrangler d1 create globalprov-db
+   npx wrangler d1 create sgc-db
    ```
 
 4. **Configurar binding en `wrangler.toml`**
    ```toml
    [[d1_databases]]
    binding = "DB"
-   database_name = "globalprov-db"
+   database_name = "sgc-db"
    database_id = "TU_DATABASE_ID"
    ```
 
 5. **Desplegar en Cloudflare Pages**
    ```bash
-   npx wrangler pages deploy . --project-name=globalprov2
+   npx wrangler pages deploy . --project-name=sgc-ordenes
    ```
 
    Las tablas se crearan automaticamente al primer request (migracion automatica via `asegurarColumnasFaltantes`).
@@ -786,4 +786,4 @@ Para instrucciones detalladas, consultar [docs/INSTALACION.md](docs/INSTALACION.
 
 ## Licencia
 
-Este proyecto fue desarrollado para **Global Pro Automotriz**.
+Este proyecto fue desarrollado para **SGC**.

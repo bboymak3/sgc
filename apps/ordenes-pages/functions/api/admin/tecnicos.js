@@ -1,7 +1,7 @@
 // ============================================
 // API: GESTIÓN DE TÉCNICOS (ADMIN)
 // Con comisión individual configurable por técnico
-// Global Pro Automotriz
+// SGC
 // ============================================
 
 async function asegurarColumnaComision(env) {

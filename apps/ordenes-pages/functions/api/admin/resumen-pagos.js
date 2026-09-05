@@ -2,7 +2,7 @@
 // API: RESUMEN DE PAGOS Y FLUJO DE CAJA
 // Con desglose de costos por categoría
 // Auto-crea tablas si no existen
-// Global Pro Automotriz
+// SGC
 // FIX: Usa tabla Pagos como fuente primaria de ingresos
 // FIX: Filtra Pagos por o.fecha_ingreso (Chile) no p.fecha_pago (UTC)
 // ============================================

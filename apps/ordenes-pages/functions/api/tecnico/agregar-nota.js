@@ -1,6 +1,6 @@
 // ============================================
 // API: AGREGAR NOTA A UNA ORDEN
-// Global Pro Automotriz
+// SGC
 // ============================================
 
 export async function onRequestPost(context) {

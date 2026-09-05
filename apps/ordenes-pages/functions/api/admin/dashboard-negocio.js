@@ -2,7 +2,7 @@
 // API: DASHBOARD GENERAL DEL NEGOCIO
 // Con desglose de costos por categoría (Mano de Obra vs Repuestos)
 // Auto-crea tablas si no existen
-// Global Pro Automotriz
+// SGC
 // ============================================
 
 import { asegurarColumnasFaltantes, buildFechaWhere } from '../../lib/db-helpers.js';

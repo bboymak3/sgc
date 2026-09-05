@@ -1,6 +1,6 @@
 // ============================================
 // API: CONFIGURAR ULTRAMSG (WHATSAPP API)
-// Global Pro Automotriz
+// SGC
 // GET  -> obtener config actual
 // POST -> guardar instance + token (y opcional test)
 // ============================================
@@ -125,7 +125,7 @@ export async function onRequestPost(context) {
       }
 
       var resultado = await enviarUltraMsg(instanceId, token, telTest,
-        'Global Pro Automotriz - Mensaje de prueba. Si ves esto, UltraMsg esta configurado correctamente!'
+        'SGC - Mensaje de prueba. Si ves esto, UltraMsg esta configurado correctamente!'
       );
 
       return new Response(JSON.stringify({

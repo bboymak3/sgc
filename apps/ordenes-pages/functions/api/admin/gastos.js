@@ -1,7 +1,7 @@
 // ============================================
 // API: GASTOS DEL NEGOCIO (CRUD)
 // Auto-crea tabla si no existe
-// Global Pro Automotriz
+// SGC
 // ============================================
 
 async function asegurarTabla(env) {

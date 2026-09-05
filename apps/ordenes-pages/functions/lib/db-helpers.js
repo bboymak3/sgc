@@ -1,6 +1,6 @@
 // ============================================
 // DB HELPERS - Utilidades compartidas para D1
-// Global Pro Automotriz
+// SGC
 // ============================================
 
 // Hora actual en Chile (America/Santiago = UTC-3, sin cambio horario desde 2022)

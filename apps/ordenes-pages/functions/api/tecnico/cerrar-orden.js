@@ -1,6 +1,6 @@
 // ============================================
 // API: CERRAR ORDEN (TÉCNICO)
-// Global Pro Automotriz
+// SGC
 // ============================================
 
 import { chileNow } from '../../lib/db-helpers.js';

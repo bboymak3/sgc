@@ -1,6 +1,6 @@
 // ============================================
 // API: APROBAR ORDEN (GUARDAR FIRMA)
-// Global Pro Automotriz
+// SGC
 // ============================================
 
 export async function onRequestPost(context) {

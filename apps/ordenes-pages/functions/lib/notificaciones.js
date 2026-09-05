@@ -1,6 +1,6 @@
 // ============================================
 // HELPER: REGISTRAR NOTIFICACIONES WHATSAPP
-// Global Pro Automotriz
+// SGC
 // - Guarda en BD (NotificacionesWhatsApp)
 // - Si UltraMsg está configurado, envía automáticamente
 // ============================================
@@ -121,28 +121,28 @@ export async function registrarNotificacion(env, ordenId, telefono, tipoEvento, 
     switch (tipoEvento) {
       case 'orden_creada':
         var linkFirma = datosOrden.link_aprobacion ? '\n' + datosOrden.link_aprobacion : '';
-        mensaje = 'Hola ' + cliente + ', su orden #' + numOT + ' ha sido creada para el vehiculo ' + patente + '. Puede revisarla y aprobarla desde este enlace:' + linkFirma + '\n\nGlobal Pro Automotriz.';
+        mensaje = 'Hola ' + cliente + ', su orden #' + numOT + ' ha sido creada para el vehiculo ' + patente + '. Puede revisarla y aprobarla desde este enlace:' + linkFirma + '\n\nSGC.';
         break;
       case 'orden_express_creada':
-        mensaje = 'Hola ' + cliente + ', su orden express #' + numOT + ' ha sido creada para el vehiculo ' + patente + '. Un tecnico sera asignado para atender su solicitud de urgencia.\n\nGlobal Pro Automotriz.';
+        mensaje = 'Hola ' + cliente + ', su orden express #' + numOT + ' ha sido creada para el vehiculo ' + patente + '. Un tecnico sera asignado para atender su solicitud de urgencia.\n\nSGC.';
         break;
       case 'orden_asignada':
-        mensaje = 'Hola ' + cliente + ', su orden #' + numOT + ' (' + patente + ') ha sido asignada a un tecnico. Estamos coordinando la visita. Global Pro Automotriz.';
+        mensaje = 'Hola ' + cliente + ', su orden #' + numOT + ' (' + patente + ') ha sido asignada a un tecnico. Estamos coordinando la visita. SGC.';
         break;
       case 'tecnico_en_sitio':
-        mensaje = 'Hola ' + cliente + ', el tecnico de Global Pro ha llegado al sitio para trabajar en su vehiculo ' + patente + ' (OT #' + numOT + ').';
+        mensaje = 'Hola ' + cliente + ', el tecnico de SGC ha llegado al sitio para trabajar en su vehiculo ' + patente + ' (OT #' + numOT + ').';
         break;
       case 'en_progreso':
         mensaje = 'Hola ' + cliente + ', los trabajos en su vehiculo ' + patente + ' (OT #' + numOT + ') estan en progreso. Le avisaremos cuando esten listos.';
         break;
       case 'completada':
-        mensaje = 'Hola ' + cliente + ', los trabajos en su vehiculo ' + patente + ' (OT #' + numOT + ') han sido completados. pronto recibira el link para revision y firma. Global Pro Automotriz.';
+        mensaje = 'Hola ' + cliente + ', los trabajos en su vehiculo ' + patente + ' (OT #' + numOT + ') han sido completados. pronto recibira el link para revision y firma. SGC.';
         break;
       case 'cerrada':
-        mensaje = 'Hola ' + cliente + ', su orden #' + numOT + ' ha sido cerrada. Gracias por confiar en Global Pro Automotriz!';
+        mensaje = 'Hola ' + cliente + ', su orden #' + numOT + ' ha sido cerrada. Gracias por confiar en SGC!';
         break;
       default:
-        mensaje = 'Hola ' + cliente + ', actualizacion de su orden #' + numOT + ' (' + patente + '). Global Pro Automotriz.';
+        mensaje = 'Hola ' + cliente + ', actualizacion de su orden #' + numOT + ' (' + patente + '). SGC.';
     }
 
     // 1. Guardar en BD siempre

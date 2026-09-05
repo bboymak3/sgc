@@ -1,4 +1,4 @@
-// chat.js — GlobalPro Citas Frontend
+// chat.js — SGC Citas Frontend
 // Chat con LLM + Flujo de agendamiento conversacional
 
 (function() {
@@ -44,7 +44,7 @@
   // ─── Initialize ────────────────────────────────────────
   async function init() {
     addBotMessage(
-      '¡Hola! 👋 Soy el asistente virtual de **Global Pro Automotriz**.\n\n' +
+      '¡Hola! 👋 Soy el asistente virtual de **SGC**.\n\n' +
       'Puedo ayudarte a:\n' +
       '📅 **Agendar una cita** de servicio\n' +
       '🔍 **Consultar** el historial de tu vehículo\n' +
@@ -476,7 +476,7 @@
           `🔧 ${data.cita.servicio}\n` +
           `🚗 Patente: ${data.cita.patente}\n\n` +
           'Recibirás una confirmación por **WhatsApp** 📱\n\n' +
-          '¡Te esperamos! Gracias por confiar en **Global Pro Automotriz** 🏎️'
+          '¡Te esperamos! Gracias por confiar en **SGC** 🏎️'
         );
 
         if (data.notificaciones) {

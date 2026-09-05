@@ -1,6 +1,6 @@
 // ============================================
 // API: CONFIGURACION DE DOMICILIO (CARGO POR RECORRIDO)
-// Global Pro Automotriz
+// SGC
 // GET  -> obtener config actual
 // POST -> guardar configuracion
 // ============================================

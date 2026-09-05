@@ -1,6 +1,6 @@
 // ============================================
 // API: CAMBIAR ESTADO DE ORDEN DE TRABAJO
-// Global Pro Automotriz
+// SGC
 // ============================================
 
 import { registrarNotificacion } from '../../lib/notificaciones.js';

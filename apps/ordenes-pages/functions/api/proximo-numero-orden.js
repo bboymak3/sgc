@@ -1,6 +1,6 @@
 // ============================================
 // API: OBTENER PRÓXIMO NÚMERO DE ORDEN
-// Global Pro Automotriz
+// SGC
 // ============================================
 
 export async function onRequestGet(context) {

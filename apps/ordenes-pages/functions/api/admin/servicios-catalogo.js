@@ -1,7 +1,7 @@
 // ============================================
 // API: CATÁLOGO DE SERVICIOS (ADMIN)
 // CRUD completo con precios sugeridos y categorías
-// Global Pro Automotriz
+// SGC
 // ============================================
 
 const CATEGORIAS_VALIDAS = ['Mantenimiento', 'Diagnóstico', 'Reparación', 'Otros'];

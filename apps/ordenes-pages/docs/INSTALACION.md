@@ -1,5 +1,5 @@
 # 📖 Guía de Instalación y Despliegue
-## Sistema de Órdenes de Trabajo - Global Pro Automotriz
+## Sistema de Órdenes de Trabajo - SGC
 
 ---
 
@@ -93,7 +93,7 @@ taller-cloudflare/
 2. Selecciona tu proyecto de Pages
 3. En la pestaña **Settings**, busca **D1 databases**
 4. Haz clic en **Create database**
-5. Asigna un nombre, por ejemplo: `globalpro-db`
+5. Asigna un nombre, por ejemplo: `sgc-db`
 6. Haz clic en **Create**
 
 ### Paso 2: Ejecutar el Schema SQL

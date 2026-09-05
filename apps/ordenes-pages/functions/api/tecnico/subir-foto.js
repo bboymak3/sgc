@@ -1,6 +1,6 @@
 // ============================================
 // API: SUBIR FOTO DE TRABAJO → Cloudflare R2 via S3 API
-// Global Pro Automotriz
+// SGC
 // Recibe base64 comprimido del cliente
 // Sube a R2 via S3 API (firma V4 nativa) y guarda URL en D1
 // ============================================

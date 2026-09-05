@@ -1,7 +1,7 @@
 // ============================================
 // API: LISTAR TODAS LAS ÓRDENES
 // Con desglose de costos por categoría
-// Global Pro Automotriz
+// SGC
 // ============================================
 
 import { asegurarColumnasFaltantes, getFechaColumn, getColumnas } from '../../lib/db-helpers.js';

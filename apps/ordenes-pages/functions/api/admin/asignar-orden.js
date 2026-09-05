@@ -1,6 +1,6 @@
 // ============================================
 // API: ASIGNAR / REASIGNAR ORDEN A TÉCNICO
-// Global Pro Automotriz
+// SGC
 // Soporta:
 //   - Asignación nueva (orden sin técnico)
 //   - Reasignación (quitarle la OT a un técnico y dársela a otro)

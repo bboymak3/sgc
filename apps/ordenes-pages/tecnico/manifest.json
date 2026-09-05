@@ -1,7 +1,7 @@
 {
-    "name": "Global Pro Automotriz",
-    "short_name": "GlobalPro",
-    "description": "App para tecnicos de Global Pro Automotriz - Gestion de ordenes de trabajo",
+    "name": "SGC",
+    "short_name": "SGC",
+    "description": "App para tecnicos de SGC - Gestion de ordenes de trabajo",
     "start_url": "/tecnico/app.html",
     "display": "standalone",
     "background_color": "#111111",

@@ -1,4 +1,4 @@
-// src/types.ts — TypeScript types for GlobalPro Citas
+// src/types.ts — TypeScript types for SGC Citas
 
 export interface Env {
   AI: Ai;
@@ -7,7 +7,7 @@ export interface Env {
   ASSETS: Fetcher;
   BUSINESS_PHONE: string;
   BUSINESS_NAME: string;
-  SGCORDENES_URL: string;   // URL de Globalprov2 para enviar órdenes
+  SGCORDENES_URL: string;   // URL de SGC-Ordenes para enviar órdenes
   ULTRAMSG_INSTANCE_ID?: string;
   ULTRAMSG_TOKEN?: string;
 }
@@ -58,7 +58,7 @@ export interface CitaRecord {
   notificada_negocio: number;
   notificada_cliente: number;
   recordatorio_enviado: number;
-  orden_enviada: number;      // 1 si se envió a Globalprov2
+  orden_enviada: number;      // 1 si se envió a SGC-Ordenes
   numero_orden_sgc: string | null;
   created_at: string;
   updated_at: string;

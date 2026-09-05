@@ -1,6 +1,6 @@
 // ============================================
 // API: CREAR ORDEN DE TRABAJO
-// Global Pro Automotriz
+// SGC
 // Soporta: orden normal (Enviada) y OT EXPRESS (Aprobada directo)
 // ============================================
 

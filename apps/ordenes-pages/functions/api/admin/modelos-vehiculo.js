@@ -1,7 +1,7 @@
 // ============================================
 // API: GESTIÓN DE MODELOS DE VEHÍCULO (ADMIN)
 // Auto-crea tabla si no existe + seed inicial
-// Global Pro Automotriz
+// SGC
 // ============================================
 
 async function asegurarTabla(env) {

@@ -1,7 +1,7 @@
 // ============================================
 // API: COSTOS ADICIONALES POR ORDEN
 // Con categorización: Mano de Obra / Repuestos-Materiales
-// Global Pro Automotriz
+// SGC
 // ============================================
 
 // Categorías válidas

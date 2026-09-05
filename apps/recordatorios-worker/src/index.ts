@@ -1,6 +1,6 @@
 /**
  * =============================================================
- * SISTEMA DE FIDELIZACION - GLOBAL PRO AUTOMOTRIZ
+ * SISTEMA DE FIDELIZACION - SGC
  * Worker: Recordatorios de Revision Tecnica via WhatsApp
  * =============================================================
  * 
@@ -361,7 +361,7 @@ async function handleSaveLead(request: Request, env: Env): Promise<Response> {
 
 		// Enviar mensaje de bienvenida via WhatsApp
 		const msgBienvenida =
-			"¡Hola! 🚗 Te has registrado en Global Pro Automotriz.\n\n" +
+			"¡Hola! 🚗 Te has registrado en SGC.\n\n" +
 			"Te recordaremos con avisos a *30 días*, *15 días* y *7 días* antes de tu revisión técnica " +
 			"(patente " +
 			patenteClean +
@@ -650,7 +650,7 @@ function generarMensajeRecordatorio(
 	}
 
 	return (
-		`${emoji} *Recordatorio de Global Pro Automotriz*\n\n` +
+		`${emoji} *Recordatorio de SGC*\n\n` +
 		`${urgencia}\n\n` +
 		`Vehículo: *${baseInfo}*\n\n` +
 		`¿Te gustaría agendar una revisión preventiva a domicilio para ir a la segura?\n\n` +

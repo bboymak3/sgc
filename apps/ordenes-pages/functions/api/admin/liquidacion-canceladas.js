@@ -2,7 +2,7 @@
 // API: CANCELACIÓN DE ÓRDENES EN LIQUIDACIÓN
 // Persiste qué órdenes están canceladas para
 // un técnico específico (no se descuentan de su pago)
-// Global Pro Automotriz
+// SGC
 // ============================================
 
 async function asegurarTabla(env) {

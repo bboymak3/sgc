@@ -1,6 +1,6 @@
 // ============================================
 // API: NOTIFICACIONES WHATSAPP
-// Global Pro Automotriz
+// SGC
 // ============================================
 
 import { asegurarColumnasFaltantes } from '../../lib/db-helpers.js';

@@ -1,6 +1,6 @@
 // ============================================
 // API: FIX SALDOS - Forzar TODAS las órdenes cerradas sin deuda
-// Global Pro Automotriz
+// SGC
 // Cualquier orden cerrada (estado_trabajo = 'Cerrada') DEBE tener:
 //   monto_restante = 0, monto_abono = monto_total, pagado = 1
 // ============================================

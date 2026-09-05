@@ -1,6 +1,6 @@
 // ============================================
 // API: CALENDARIO DE AGENDAMIENTO POR TECNICO
-// Global Pro Automotriz
+// SGC
 // GET: Lista eventos (con filtros por tecnico, fecha, tipo)
 // POST: Crea nuevo evento en agenda
 // PUT: Actualiza evento (mover, editar)

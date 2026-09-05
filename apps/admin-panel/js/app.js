@@ -22,6 +22,7 @@ document.addEventListener('DOMContentLoaded', () => {
       switch (view) {
         case 'dashboard': loadDashboard(); break;
         case 'citas': loadCitas(); break;
+        case 'calendario': loadCalendario(); break;
         case 'ordenes': loadOrdenes(); break;
         case 'tecnicos': loadTecnicos(); break;
       }

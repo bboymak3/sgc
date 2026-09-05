@@ -1,7 +1,7 @@
 {
   "name": "globalpro-ordenes-trabajo",
   "version": "1.0.0",
-  "description": "Sistema de Órdenes de Trabajo para Global Pro Automotriz",
+  "description": "Sistema de Órdenes de Trabajo para SGC",
   "main": "index.html",
   "scripts": {
     "dev": "npx serve . -p 3000",
@@ -14,7 +14,7 @@
     "automotriz",
     "globalpro"
   ],
-  "author": "Global Pro Automotriz",
+  "author": "SGC",
   "license": "MIT",
   "dependencies": {
     "jspdf": "^2.5.1"

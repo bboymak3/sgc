@@ -7,7 +7,7 @@ compatibility_date = "2024-01-01"
 # Cloudflare Pages (deploy vía Git) NO maneja bien los bindings
 # desde wrangler.toml. Todos se configuran desde el Dashboard:
 #
-# Workers & Pages > Globalprov2 > Settings > Functions
+# Workers & Pages > SGC-Ordenes > Settings > Functions
 #
 # D1 database bindings:
 #   Variable name: DB  |  D1 Database: global-pro-db

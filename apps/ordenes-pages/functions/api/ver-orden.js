@@ -1,7 +1,7 @@
 // ============================================
 // API: VER ORDEN DE TRABAJO
 // Con desglose de costos por categoría
-// Global Pro Automotriz
+// SGC
 // ============================================
 
 export async function onRequestGet(context) {

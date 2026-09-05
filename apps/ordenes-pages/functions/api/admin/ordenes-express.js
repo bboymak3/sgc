@@ -1,6 +1,6 @@
 // ============================================
 // API: ÓRDENES EXPRESS - Dashboard dedicado
-// Global Pro Automotriz
+// SGC
 // GET: Lista órdenes express con métricas y filtros
 // ============================================
 

@@ -2,7 +2,7 @@
 // API: ADELANTOS A TÉCNICOS
 // CRUD para registrar préstamos/adelantos que
 // se descuentan de la liquidación del técnico
-// Global Pro Automotriz
+// SGC
 // ============================================
 
 import { asegurarColumnasFaltantes } from '../../lib/db-helpers.js';

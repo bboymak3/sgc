@@ -1,6 +1,6 @@
 // ============================================
 // API: OBTENER NOTAS DE UNA ORDEN
-// Global Pro Automotriz
+// SGC
 // ============================================
 
 export async function onRequestGet(context) {

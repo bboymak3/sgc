@@ -1,6 +1,6 @@
 // ============================================
 // API: ELIMINAR ORDEN DE TRABAJO
-// Global Pro Automotriz
+// SGC
 // Eliminación en cascada de todas las tablas relacionadas
 // ============================================
 

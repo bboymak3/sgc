@@ -1,5 +1,5 @@
-// src/index.ts — GlobalPro Citas Worker v2
-// Chat con LLM + Agendamiento automático + Puente a Globalprov2
+// src/index.ts — SGC Citas Worker v2
+// Chat con LLM + Agendamiento automático + Puente a SGC-Ordenes
 
 import { Env, ChatMessage, CitaRequest, SlotDisponible, VehiculoTaller } from './types';
 
@@ -275,15 +275,15 @@ async function consultarCitas(env: Env, filtro: { patente?: string; telefono?: s
   }
 }
 
-// ─── Enviar Orden a Globalprov2 (como orden express) ─────────
-async function enviarOrdenAGlobalprov2(env: Env, cita: any, vehiculoData: any): Promise<{
+// ─── Enviar Orden a SGC-Ordenes (como orden express) ─────────
+async function enviarOrdenASgcOrdenes(env: Env, cita: any, vehiculoData: any): Promise<{
   success: boolean;
   numero_orden?: number;
   error?: string;
 }> {
   try {
     const url = `${env.SGCORDENES_URL}/api/public/crear-orden-express`;
-    console.log('Enviando orden a Globalprov2:', url);
+    console.log('Enviando orden a SGC-Ordenes:', url);
 
     const body = {
       patente: cita.patente,
@@ -306,26 +306,26 @@ async function enviarOrdenAGlobalprov2(env: Env, cita: any, vehiculoData: any): 
     });
 
     const responseText = await response.text();
-    console.log('Globalprov2 response status:', response.status, 'body:', responseText);
+    console.log('SGC-Ordenes response status:', response.status, 'body:', responseText);
 
     let data: any;
     try {
       data = JSON.parse(responseText);
     } catch (parseErr: any) {
-      console.error('Failed to parse Globalprov2 response:', parseErr);
-      return { success: false, error: 'Respuesta inválida de Globalprov2: ' + responseText.substring(0, 200) };
+      console.error('Failed to parse SGC-Ordenes response:', parseErr);
+      return { success: false, error: 'Respuesta inválida de SGC-Ordenes: ' + responseText.substring(0, 200) };
     }
 
     if (data.success && data.numero_orden) {
-      console.log('Orden creada en Globalprov2, número:', data.numero_orden);
+      console.log('Orden creada en SGC-Ordenes, número:', data.numero_orden);
       return { success: true, numero_orden: data.numero_orden };
     } else {
-      console.error('Globalprov2 rechazó la orden:', JSON.stringify(data));
-      return { success: false, error: data.error || 'Error al crear orden en Globalprov2' };
+      console.error('SGC-Ordenes rechazó la orden:', JSON.stringify(data));
+      return { success: false, error: data.error || 'Error al crear orden en SGC-Ordenes' };
     }
   } catch (error: any) {
-    console.error('Error enviando orden a Globalprov2:', error.message, error.stack);
-    return { success: false, error: 'Error de conexión con Globalprov2: ' + error.message };
+    console.error('Error enviando orden a SGC-Ordenes:', error.message, error.stack);
+    return { success: false, error: 'Error de conexión con SGC-Ordenes: ' + error.message };
   }
 }
 
@@ -608,7 +608,7 @@ export default {
       }
 
       // ─── POST /api/agendar ────────────────────────────────
-      // Crea cita en DB propia + envía orden a Globalprov2
+      // Crea cita en DB propia + envía orden a SGC-Ordenes
       if (path === '/api/agendar' && request.method === 'POST') {
         const body = await request.json() as CitaRequest;
 
@@ -690,7 +690,7 @@ export default {
         const cita = await env.DB.prepare('SELECT * FROM Citas WHERE id = ?').bind(citaId).first() as any;
 
         // ─── ENVIAR ORDEN A GLOBALPROV2 ─────────────────────
-        const ordenResult = await enviarOrdenAGlobalprov2(env, cita, vehiculoResult.vehiculo);
+        const ordenResult = await enviarOrdenASgcOrdenes(env, cita, vehiculoResult.vehiculo);
 
         // Update cita with orden status
         const numOrden = ordenResult.numero_orden ? String(ordenResult.numero_orden) : null;
@@ -791,7 +791,7 @@ export default {
         });
       }
 
-      // ─── GET /api/citas/rango — Para calendario Globalprov2 ────
+      // ─── GET /api/citas/rango — Para calendario SGC-Ordenes ────
       if (path === '/api/citas/rango' && request.method === 'GET') {
         const inicio = url.searchParams.get('inicio');
         const fin = url.searchParams.get('fin');
@@ -862,9 +862,9 @@ export default {
         // ─── CREAR ORDEN EN GLOBALPROV2 si no tiene una ────
         let ordenCreada = false;
         if (cita && !cita.numero_orden_sgc) {
-          console.log('Cita sin OT, creando orden en Globalprov2 para cita:', id);
+          console.log('Cita sin OT, creando orden en SGC-Ordenes para cita:', id);
           const vehiculoData = await consultarVehiculoEnTaller(env, cita.patente);
-          const ordenResult = await enviarOrdenAGlobalprov2(env, cita, vehiculoData.vehiculo);
+          const ordenResult = await enviarOrdenASgcOrdenes(env, cita, vehiculoData.vehiculo);
           if (ordenResult.success) {
             const numOrden = ordenResult.numero_orden ? String(ordenResult.numero_orden) : null;
             await env.DB.prepare(
@@ -888,7 +888,7 @@ export default {
             `⏰ Hora: ${cita.hora_cita}\n` +
             `🚗 Vehículo: ${cita.patente}${cita.marca ? ' ' + cita.marca : ''}${cita.modelo ? ' ' + cita.modelo : ''}` +
             otLine +
-            `\n\nLo esperamos. *Global Pro Automotriz*\n📞 +56939026185`;
+            `\n\nLo esperamos. *SGC*\n📞 +56939026185`;
           await enviarWhatsApp(env, cita.telefono, msg);
         }
 
@@ -921,7 +921,7 @@ export default {
             `📅 Fecha: ${cita.fecha_cita}\n` +
             `\nLamentamos las molestias. Para más información o reagendar, contacte directamente:\n` +
             `📞 *WhatsApp: +56939026185*\n` +
-            `*Global Pro Automotriz*`;
+            `*SGC*`;
           await enviarWhatsApp(env, cita.telefono, msg);
         }
 

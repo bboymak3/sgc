@@ -1,6 +1,6 @@
 // ============================================
 // API: SERVIR IMAGEN DESDE R2 via S3 API
-// Global Pro Automotriz
+// SGC
 // GET: ?key=ordenes/123/antes-1700000000.jpg
 // Lee del bucket R2 via S3 API (firma V4 nativa)
 // ============================================

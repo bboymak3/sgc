@@ -1,6 +1,6 @@
 // ============================================
 // API: OBTENER ÓRDENES APROBADAS PARA TÉCNICOS
-// Global Pro Automotriz
+// SGC
 // ============================================
 
 import { asegurarColumnasFaltantes } from '../../lib/db-helpers.js';

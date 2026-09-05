@@ -1,6 +1,6 @@
 // ============================================
 // API: GENERAR TOKEN DE FIRMA (PARA TÉCNICOS)
-// Global Pro Automotriz
+// SGC
 // ============================================
 
 export async function onRequestPost(context) {

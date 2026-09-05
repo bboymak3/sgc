@@ -1,7 +1,7 @@
 // ============================================
 // API: EXPORTAR TODOS LOS DATOS (completo)
 // Consulta TODAS las tablas de la BD con filtros de periodo
-// Global Pro Automotriz
+// SGC
 // ============================================
 // Usa PRAGMA para detectar columnas existentes y evitar
 // errores "no such column" en D1 remoto.

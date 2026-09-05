@@ -389,7 +389,7 @@ function getApprovalPage(orden, numeroFormateado, token, tieneFirma, notas = nul
     '<head>' +
     '<meta charset="UTF-8">' +
     '<meta name="viewport" content="width=device-width, initial-scale=1.0">' +
-    '<title>Orden de Trabajo #' + numeroFormateado + ' - Global Pro Automotriz</title>' +
+    '<title>Orden de Trabajo #' + numeroFormateado + ' - SGC</title>' +
     '<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">' +
     '<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">' +
     '<style>' +
@@ -402,11 +402,11 @@ function getApprovalPage(orden, numeroFormateado, token, tieneFirma, notas = nul
     '<nav class="navbar navbar-dark no-print" style="background: #a80000;">' +
     '<div class="container">' +
     '<a class="navbar-brand fw-bold" href="#">' +
-    '<i class="fas fa-wrench me-2"></i>GLOBAL PRO AUTOMOTRIZ' +
+    '<i class="fas fa-wrench me-2"></i>SGC' +
     '</a>' +
     '</div>' +
     '</nav>' +
-    '<div style="width:100%;text-align:center;line-height:0;"><img src="/banner.jpeg" alt="Global Pro Automotriz" style="width:100%;max-width:600px;height:auto;display:block;margin:0 auto;border-radius:12px;box-shadow:0 4px 15px rgba(0,0,0,0.15);"></div>' +
+    '<div style="width:100%;text-align:center;line-height:0;"><img src="/banner.jpeg" alt="SGC" style="width:100%;max-width:600px;height:auto;display:block;margin:0 auto;border-radius:12px;box-shadow:0 4px 15px rgba(0,0,0,0.15);"></div>' +
     '<div class="container py-4">' +
 
     // === TARJETA PRINCIPAL DE LA OT ===
@@ -565,12 +565,12 @@ function getApprovalPage(orden, numeroFormateado, token, tieneFirma, notas = nul
     // Header
     '  doc.setFontSize(8); doc.setTextColor(128,128,128); doc.text("OT #" + numeroFormateado, pageWidth - 15, 10, { align: "right" });' +
     '  doc.setFontSize(16); doc.setTextColor(168,0,0); doc.text("ORDEN DE TRABAJO", pageWidth / 2, yPos, { align: "center" }); yPos += 8;' +
-    '  doc.setFontSize(10); doc.text("GLOBAL PRO AUTOMOTRIZ", pageWidth / 2, yPos, { align: "center" }); yPos += 10;' +
+    '  doc.setFontSize(10); doc.text("SGC", pageWidth / 2, yPos, { align: "center" }); yPos += 10;' +
 
     // Sección 1: Info Taller
     '  doc.setTextColor(0,0,0); doc.setFontSize(9); doc.setFont(undefined, "bold"); doc.text("1. INFORMACION DEL TALLER", leftMargin, yPos); yPos += 6;' +
     '  doc.setFont(undefined, "normal"); doc.setFontSize(7);' +
-    '  doc.text("Empresa: Global Pro Automotriz", leftMargin, yPos); yPos += 4;' +
+    '  doc.text("Empresa: SGC", leftMargin, yPos); yPos += 4;' +
     '  doc.text("Direccion: Padre Alberto Hurtado 3596, Pedro Aguirre Cerda", leftMargin, yPos); yPos += 4;' +
     '  doc.text("Contactos: +56 9 3902 6185", leftMargin, yPos); yPos += 10;' +
 
@@ -722,7 +722,7 @@ function getApprovalPage(orden, numeroFormateado, token, tieneFirma, notas = nul
     // Footer
     '  doc.setFontSize(6); doc.setTextColor(128,128,128);' +
     '  doc.text("Generado: " + new Date().toLocaleString("es-CL"), pageWidth / 2, pageHeight - 10, { align: "center" });' +
-    '  doc.text("Global Pro Automotriz - Padre Alberto Hurtado 3596, Pedro Aguirre Cerda", pageWidth / 2, pageHeight - 6, { align: "center" });' +
+    '  doc.text("SGC - Padre Alberto Hurtado 3596, Pedro Aguirre Cerda", pageWidth / 2, pageHeight - 6, { align: "center" });' +
 
     '  doc.save("OT-' + numeroFormateado + '-' + (orden.patente_placa || 'N/A') + '.pdf");' +
     '}' +

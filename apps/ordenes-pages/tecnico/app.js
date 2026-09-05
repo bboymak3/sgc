@@ -1,6 +1,6 @@
 // ============================================
 // APP.JS - Aplicación Móvil para Técnicos
-// Global Pro Automotriz
+// SGC
 // ============================================
 
 const API_BASE = '/api/tecnico';
@@ -1380,7 +1380,7 @@ function enviarResumenWhatsApp() {
         `Vehículo: ${ordenActual.marca || 'N/A'} ${ordenActual.modelo || ''} ${ordenActual.patente_placa || ''}\n` +
         `Estado final: ${ordenActual.estado_trabajo || ordenActual.estado}\n` +
         `Fecha cierre: ${new Date().toLocaleString('es-CL')}\n` +
-        `Gracias por su confianza en Global Pro!`);
+        `Gracias por su confianza en SGC!`);
 
     const whatsappUrl = `https://wa.me/${tel}?text=${mensaje}`;
     window.open(whatsappUrl, '_blank');
@@ -1902,6 +1902,6 @@ function enviarTrackingWhatsApp(url) {
         return;
     }
     var tel = String(telefono).replace(/[^0-9]/g, '');
-    var mensaje = encodeURIComponent('Hola! Puedes ver mi ubicación en tiempo real mientras voy a tu domicilio en este link: ' + url + '\n\nGlobal Pro Automotriz');
+    var mensaje = encodeURIComponent('Hola! Puedes ver mi ubicación en tiempo real mientras voy a tu domicilio en este link: ' + url + '\n\nSGC');
     window.open('https://wa.me/' + tel + '?text=' + mensaje, '_blank');
 }

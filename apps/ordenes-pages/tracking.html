@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Tracking - Global Pro Automotriz</title>
+    <title>Tracking - SGC</title>
     <meta name="theme-color" content="#a80000">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -152,7 +152,7 @@
     <!-- Header -->
     <div class="tracking-header">
         <h5><i class="fas fa-satellite-dish me-2"></i>TRACKING EN VIVO</h5>
-        <small id="header-info">Global Pro Automotriz</small>
+        <small id="header-info">SGC</small>
     </div>
 
     <!-- Error state (hidden by default) -->
@@ -282,7 +282,7 @@
             var patente = orden.patente || '';
             var numero = orden.numero_orden ? String(orden.numero_orden).padStart(6, '0') : '';
 
-            document.getElementById('header-info').textContent = 'OT #' + numero + ' - Global Pro Automotriz';
+            document.getElementById('header-info').textContent = 'OT #' + numero + ' - SGC';
             document.getElementById('info-vehiculo').textContent = patente || 'Vehiculo';
             document.getElementById('info-direccion').textContent = orden.direccion || 'Sin direccion';
             document.getElementById('info-tecnico').textContent = (data.tecnico && data.tecnico.nombre) ? data.tecnico.nombre : 'Tecnico';

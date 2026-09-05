@@ -1,6 +1,6 @@
 // ============================================
 // API: OBTENER HISTORIAL DE SEGUIMIENTO
-// Global Pro Automotriz
+// SGC
 // ============================================
 
 export async function onRequestGet(context) {

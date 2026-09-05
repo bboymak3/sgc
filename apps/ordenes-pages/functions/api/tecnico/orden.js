@@ -1,6 +1,6 @@
 // ============================================
 // API: OBTENER DETALLE DE UNA ORDEN
-// Global Pro Automotriz
+// SGC
 // ============================================
 
 export async function onRequestGet(context) {

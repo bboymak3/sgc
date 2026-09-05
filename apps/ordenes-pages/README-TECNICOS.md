@@ -1,8 +1,8 @@
-# Sistema de Gestión de Técnicos - Global Pro Automotriz
+# Sistema de Gestión de Técnicos - SGC
 
 ## 📋 Resumen de Implementaciones
 
-Este documento describe todas las mejoras y nuevas funcionalidades implementadas en el sistema de Global Pro Automotriz.
+Este documento describe todas las mejoras y nuevas funcionalidades implementadas en el sistema de SGC.
 
 ---
 

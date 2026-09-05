@@ -1,7 +1,7 @@
 // ============================================
 // API: BUSCAR ÓRDENES POR PATENTE O NÚMERO
 // Con desglose de costos por categoría
-// Global Pro Automotriz
+// SGC
 // ============================================
 
 import { asegurarColumnasFaltantes } from '../lib/db-helpers.js';

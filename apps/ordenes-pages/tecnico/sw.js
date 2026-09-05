@@ -1,5 +1,5 @@
-// Service Worker - Global Pro Automotriz (App Tecnico)
-const CACHE_NAME = 'globalpro-v1';
+// Service Worker - SGC (App Tecnico)
+const CACHE_NAME = 'sgc-v1';
 const ASSETS_TO_CACHE = [
     '/tecnico/app.html',
     '/tecnico/app.js',

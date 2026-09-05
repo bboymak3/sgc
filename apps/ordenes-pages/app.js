@@ -1,6 +1,6 @@
 // ============================================
 // APP.JS - Lógica del Panel Administrativo
-// Global Pro Automotriz
+// SGC
 // ============================================
 
 // Configuración
@@ -485,7 +485,7 @@ function abrirMapaExpress() {
             // Reverse geocoding con Nominatim (OpenStreetMap)
             document.getElementById('express-mapa-direccion-preview').textContent = 'Detectando direccion...';
             fetch(`https://nominatim.openstreetmap.org/reverse?lat=${lat}&lon=${lng}&format=json&accept-language=es`, {
-                headers: { 'User-Agent': 'GlobalProAutomotriz/1.0' }
+                headers: { 'User-Agent': 'SGCAutomotriz/1.0' }
             })
             .then(r => r.json())
             .then(data => {
@@ -855,7 +855,7 @@ async function guardarOrden() {
                     <div class="gp-orden-sub"><i class="fas fa-car me-1"></i>${ordenData.patente} &bull; ${ordenData.cliente}</div>
                     <div class="gp-divider"></div>
                     <div class="gp-actions-grid">
-                        <button class="gp-action-btn gp-btn-whatsapp" onclick="window.open('https://wa.me/${ordenData.telefono.replace(/\D/g, '')}?text=${encodeURIComponent('Hola, tiene una orden de trabajo de Global Pro Automotriz. Para verla y aprobarla, ingrese a: ' + linkAprobacion)}', '_blank')">
+                        <button class="gp-action-btn gp-btn-whatsapp" onclick="window.open('https://wa.me/${ordenData.telefono.replace(/\D/g, '')}?text=${encodeURIComponent('Hola, tiene una orden de trabajo de SGC. Para verla y aprobarla, ingrese a: ' + linkAprobacion)}', '_blank')">
                             <i class="fab fa-whatsapp"></i> WhatsApp
                         </button>
                         <button class="gp-action-btn gp-btn-copiar-link" onclick="navigator.clipboard.writeText('${linkAprobacion}'); mostrarToastGP('Link copiado al portapapeles')">
@@ -1515,10 +1515,10 @@ function mostrarOrdenEnModal(orden) {
         <div class="row">
             <div class="col-md-6">
                 <h6 class="fw-bold mb-2"><i class="fas fa-building me-2"></i>INFORMACIÓN DEL TALLER</h6>
-                <p class="mb-1"><strong>Empresa:</strong> Global Pro Automotriz</p>
+                <p class="mb-1"><strong>Empresa:</strong> SGC</p>
                 <p class="mb-1"><strong>Dirección:</strong> Padre Alberto Hurtado 3596, Pedro Aguirre Cerda</p>
                 <p class="mb-1"><strong>Contactos:</strong> +56 9 3902 6185</p>
-                <p class="mb-1"><strong>RRSS:</strong> @globalproautomotriz</p>
+                <p class="mb-1"><strong>RRSS:</strong> @sgc</p>
                 
                 <hr class="my-2">
                 
@@ -1802,7 +1802,7 @@ async function generarPDF(orden) {
     yPos += 8;
 
     doc.setFontSize(10);
-    doc.text('GLOBAL PRO AUTOMOTRIZ', pageWidth / 2, yPos, { align: 'center' });
+    doc.text('SGC', pageWidth / 2, yPos, { align: 'center' });
     yPos += 10;
 
     // Información del Taller
@@ -1814,10 +1814,10 @@ async function generarPDF(orden) {
 
     doc.setFont(undefined, 'normal');
     doc.setFontSize(7);
-    doc.text('Empresa: Global Pro Automotriz', leftMargin, yPos); yPos += 4;
+    doc.text('Empresa: SGC', leftMargin, yPos); yPos += 4;
     doc.text('Dirección: Padre Alberto Hurtado 3596, Pedro Aguirre Cerda', leftMargin, yPos); yPos += 4;
     doc.text('Contactos: +56 9 3902 6185', leftMargin, yPos); yPos += 4;
-    doc.text('RRSS: @globalproautomotriz', leftMargin, yPos); yPos += 10;
+    doc.text('RRSS: @sgc', leftMargin, yPos); yPos += 10;
 
     // Datos del Cliente
     doc.setFontSize(9);
@@ -2112,7 +2112,7 @@ function compartirLink() {
     if (navigator.share) {
         navigator.share({
             title: `Orden de Trabajo #${String(ordenActual.numero_orden).padStart(6, '0')}`,
-            text: `Tiene una orden de trabajo de Global Pro Automotriz`,
+            text: `Tiene una orden de trabajo de SGC`,
             url: link
         });
     } else {
@@ -8165,7 +8165,7 @@ function editarEventoCalendario(event) {
                         ${props.observaciones ? '<div style="margin-top:12px;padding-top:12px;border-top:1px solid #dee2e6;"><strong>📝 Requerimientos:</strong><br>' + props.observaciones + '</div>' : ''}
                     </div>
                     <div style="margin-top:12px;padding:10px;background:#e8f5e9;border-radius:8px;font-size:0.82rem;color:#15803d;">
-                        <i class="fas fa-info-circle"></i> Esta cita fue agendada automaticamente via el Chat IA de mecanico247.com. La orden correspondiente fue enviada a Globalprov2 como orden express.
+                        <i class="fas fa-info-circle"></i> Esta cita fue agendada automaticamente via el Chat IA de mecanico247.com. La orden correspondiente fue enviada a SGC-Ordenes como orden express.
                     </div>
                 </div>
             `;
