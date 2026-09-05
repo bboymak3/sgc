@@ -69,7 +69,7 @@ CREATE TABLE IF NOT EXISTS servicios (
 
 -- =====================================================
 -- Tabla: servicios_unificados (tabla activa usada por el chat IA)
--- Schema idéntico al que tiene sgc_citas_db en producción
+-- Schema completo con todas las columnas que usa el codigo
 -- =====================================================
 CREATE TABLE IF NOT EXISTS servicios_unificados (
   id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -78,6 +78,9 @@ CREATE TABLE IF NOT EXISTS servicios_unificados (
   icono TEXT DEFAULT 'wrench',
   duracion_minutos INTEGER DEFAULT 60,
   precio_min TEXT,
+  precio REAL DEFAULT 0,
+  categoria TEXT DEFAULT 'Mantenimiento',
+  origen TEXT DEFAULT 'base',
   activo INTEGER DEFAULT 1,
   orden INTEGER DEFAULT 0,
   requiere_vehiculo INTEGER DEFAULT 1,
@@ -85,13 +88,13 @@ CREATE TABLE IF NOT EXISTS servicios_unificados (
 );
 
 -- Servicios unificados iniciales (con tipo_atencion)
-INSERT OR IGNORE INTO servicios_unificados (nombre, descripcion, icono, duracion_minutos, precio_min, orden, requiere_vehiculo, es_domicilio) VALUES
-('Diagnóstico y Scanner en Terreno', 'Diagnóstico con scanner OBD2 + inspección visual', 'microchip', 60, '$25.000', 1, 1, 1),
-('Mantención Preventiva y Cambio de Aceite', 'Cambio de aceite + filtros + revisión general', 'oil-can', 60, '$35.000', 2, 1, 1),
-('Reparación de Tren Delantero y Frenos', 'Rotulas, terminales, pastillas, discos', 'car', 90, '$45.000', 3, 1, 0),
-('Baterías, Sistema Eléctrico y Auxilio Mecánico', 'Cambio de batería, alternador, arranque, auxilio', 'bolt', 45, '$30.000', 4, 1, 1),
-('Aire Acondicionado Automotriz', 'Recarga + revisión completa', 'snowflake', 60, '$35.000', 5, 1, 0),
-('Inspección para Revisión Técnica', 'Pre-check antes de la revisión técnica', 'clipboard-check', 60, '$30.000', 6, 1, 0);
+INSERT OR IGNORE INTO servicios_unificados (nombre, descripcion, icono, duracion_minutos, precio_min, precio, categoria, orden, requiere_vehiculo, es_domicilio) VALUES
+('Diagnóstico y Scanner en Terreno', 'Diagnóstico con scanner OBD2 + inspección visual', 'microchip', 60, '$25.000', 25000, 'Diagnóstico', 1, 1, 1),
+('Mantención Preventiva y Cambio de Aceite', 'Cambio de aceite + filtros + revisión general', 'oil-can', 60, '$35.000', 35000, 'Mantención', 2, 1, 1),
+('Reparación de Tren Delantero y Frenos', 'Rotulas, terminales, pastillas, discos', 'car', 90, '$45.000', 45000, 'Frenos', 3, 1, 0),
+('Baterías, Sistema Eléctrico y Auxilio Mecánico', 'Cambio de batería, alternador, arranque, auxilio', 'bolt', 45, '$30.000', 30000, 'Eléctrico', 4, 1, 1),
+('Aire Acondicionado Automotriz', 'Recarga + revisión completa', 'snowflake', 60, '$35.000', 35000, 'Aire Acondicionado', 5, 1, 0),
+('Inspección para Revisión Técnica', 'Pre-check antes de la revisión técnica', 'clipboard-check', 60, '$30.000', 30000, 'Inspección', 6, 1, 0);
 
 -- =====================================================
 -- Tabla: horarios (atención por día)
