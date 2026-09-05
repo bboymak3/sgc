@@ -1,7 +1,6 @@
-[vars]
-BUSINESS_PHONE = "56939026185"
-BUSINESS_NAME = "SGC"
-SGCORDENES_URL = "https://sgc-ordenes.pages.dev"
+name = "sgc-citas"
+main = "src/index.ts"
+compatibility_date = "2025-10-08"
 
 # D1 databases
 [[d1_databases]]
@@ -17,12 +16,13 @@ database_id = "5c1ef5cd-a0ea-4720-aba2-c660ec125dd2"
 # Static assets (UI del chat IA)
 [assets]
 directory = "./static"
-binding = "ASSETS"
 
 # Workers AI
 [ai]
 binding = "AI"
 
-name = "sgc-citas"
-main = "src/index.ts"
-compatibility_date = "2025-10-08"
+# Variables de entorno
+[vars]
+BUSINESS_PHONE = "56939026185"
+BUSINESS_NAME = "SGC"
+SGCORDENES_URL = "https://sgc-ordenes.pages.dev"
