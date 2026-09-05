@@ -931,6 +931,20 @@ export default {
       }
 
       // ─── Static Assets (Chat UI) ────────────────────────────
+      // Para HTML principal: anti-cache para que los cambios se propaguen
+      const url = new URL(request.url);
+      if (url.pathname === '/' || url.pathname === '/index.html' || url.pathname === '/admin' || url.pathname === '/admin.html' || url.pathname === '/ordenes' || url.pathname === '/ordenes.html') {
+        const assetResp = await env.ASSETS.fetch(request);
+        const newHeaders = new Headers(assetResp.headers);
+        newHeaders.set('Cache-Control', 'no-cache, no-store, must-revalidate');
+        newHeaders.set('Pragma', 'no-cache');
+        newHeaders.set('Expires', '0');
+        return new Response(assetResp.body, {
+          status: assetResp.status,
+          statusText: assetResp.statusText,
+          headers: newHeaders,
+        });
+      }
       return env.ASSETS.fetch(request);
 
     } catch (error: any) {

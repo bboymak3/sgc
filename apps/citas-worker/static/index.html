@@ -469,8 +469,10 @@ async function sendMessage() {
 
   } catch (error) {
     hideTyping();
-    addBotMessage('❌ Error de conexión. Intenta de nuevo en un momento.');
-    console.error('Chat error:', error);
+    // Mostrar el error real para diagnóstico (no solo mensaje genérico)
+    const errorMsg = error.message || 'Error desconocido';
+    console.error('Chat error completo:', error);
+    addBotMessage('❌ Error de conexión. Intenta de nuevo en un momento.<br><br><small style="opacity:0.7">Detalle técnico: ' + errorMsg + '</small>');
   } finally {
     isStreaming = false;
     document.getElementById('sendBtn').disabled = false;
@@ -636,7 +638,9 @@ async function confirmarCita(encodedCita) {
       addBotMessage(`❌ No se pudo agendar la cita: ${data.error || 'Error desconocido'}`);
     }
   } catch (error) {
-    addBotMessage('❌ Error de conexión al agendar. Intenta de nuevo.');
+    const errorMsg = error.message || 'Error desconocido';
+    console.error('Agendar error completo:', error);
+    addBotMessage('❌ Error de conexión al agendar. Intenta de nuevo.<br><br><small style="opacity:0.7">Detalle técnico: ' + errorMsg + '</small>');
   }
 }
 
