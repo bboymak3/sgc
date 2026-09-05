@@ -47,22 +47,22 @@
 
     <!-- Navbar -->
     <nav class="navbar navbar-dark sgc-navbar">
-      <div class="container-fluid">
+      <div class="container-fluid d-flex align-items-center justify-content-between" style="gap:8px;">
         <a class="navbar-brand" href="#">
           <i class="fas fa-calendar-check"></i>
           <strong>SGC Admin</strong>
           <small>Sistema de Gestión de Citas</small>
         </a>
-        <div class="d-flex align-items-center">
-          <span class="text-light me-3" id="user-info"></span>
+        <div class="d-flex align-items-center" style="gap:8px;">
+          <span class="text-light" id="user-info"></span>
           <button class="btn btn-sm btn-outline-light" id="logout-btn">
-            <i class="fas fa-sign-out-alt"></i> Salir
+            <i class="fas fa-sign-out-alt"></i> <span class="d-none-mobile">Salir</span>
           </button>
         </div>
       </div>
     </nav>
 
-    <div class="d-flex">
+    <div class="sgc-app-wrap">
       <!-- Sidebar -->
       <nav class="sgc-sidebar" id="sidebar">
         <a href="#" class="sgc-nav-item active" data-view="dashboard">
@@ -87,33 +87,27 @@
         <div id="view-dashboard" class="sgc-view"></div>
         <div id="view-citas" class="sgc-view" style="display:none;"></div>
         <div id="view-calendario" class="sgc-view" style="display:none;">
-          <div class="section-card-header mb-3">
+          <div class="section-card-header mb-2">
             <h2><i class="fas fa-calendar-alt"></i> Calendario</h2>
-            <button class="btn btn-primary" onclick="showCrearEventoModal()">
-              <i class="fas fa-plus"></i> Nuevo Evento
+            <button class="btn btn-primary btn-sm" onclick="showCrearEventoModal()">
+              <i class="fas fa-plus"></i> <span class="d-none-mobile">Nuevo Evento</span>
             </button>
           </div>
 
-          <div class="mb-3">
-            <div class="row g-2 align-items-center">
-              <div class="col-md-4">
-                <select id="cal-filtro-tecnico" class="form-select" onchange="recargarCalendario()">
-                  <option value="">Todos los técnicos</option>
-                </select>
-              </div>
-              <div class="col-md-8">
-                <div class="d-flex gap-3 small text-muted">
-                  <span><span style="display:inline-block;width:12px;height:12px;background:#0d6efd;border-radius:2px;"></span> Agenda/OT</span>
-                  <span><span style="display:inline-block;width:12px;height:12px;background:#16a34a;border-radius:2px;"></span> Cita nueva</span>
-                  <span><span style="display:inline-block;width:12px;height:12px;background:#dc3545;border-radius:2px;"></span> Cita rechazada</span>
-                  <span><span style="display:inline-block;width:12px;height:12px;background:#a80000;border-radius:2px;"></span> OT Express</span>
-                </div>
-              </div>
+          <div class="mb-2">
+            <select id="cal-filtro-tecnico" class="form-select form-select-sm mb-2" onchange="recargarCalendario()">
+              <option value="">Todos los técnicos</option>
+            </select>
+            <div class="d-flex flex-wrap gap-2 small text-muted" style="font-size:0.72rem;">
+              <span><span style="display:inline-block;width:10px;height:10px;background:#0d6efd;border-radius:2px;vertical-align:middle;"></span> Agenda/OT</span>
+              <span><span style="display:inline-block;width:10px;height:10px;background:#16a34a;border-radius:2px;vertical-align:middle;"></span> Cita nueva</span>
+              <span><span style="display:inline-block;width:10px;height:10px;background:#dc3545;border-radius:2px;vertical-align:middle;"></span> Cita rechazada</span>
+              <span><span style="display:inline-block;width:10px;height:10px;background:#a80000;border-radius:2px;vertical-align:middle;"></span> OT Express</span>
             </div>
           </div>
 
           <div class="section-card">
-            <div id="fullcalendar" style="min-height:600px;"></div>
+            <div id="fullcalendar" style="min-height:500px;"></div>
           </div>
         </div>
         <div id="view-ordenes" class="sgc-view" style="display:none;"></div>

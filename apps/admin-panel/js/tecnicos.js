@@ -25,11 +25,11 @@ async function loadTecnicos() {
               <tr>
                 <th>ID</th>
                 <th>Nombre</th>
-                <th>Teléfono</th>
-                <th>Especialidad</th>
-                <th>Zona</th>
-                <th>Comisión</th>
-                <th>OT activas</th>
+                <th class="d-none-mobile">Teléfono</th>
+                <th class="d-none-mobile">Especialidad</th>
+                <th class="d-none-mobile">Zona</th>
+                <th class="d-none-mobile">Comisión</th>
+                <th class="d-none-mobile">OT</th>
                 <th>Estado</th>
                 <th>Acciones</th>
               </tr>
@@ -52,12 +52,12 @@ function renderTecnicoRow(t) {
   return `
     <tr>
       <td>#${t.id}</td>
-      <td><strong>${t.nombre} ${t.apellido || ''}</strong></td>
-      <td>${t.telefono || '—'}</td>
-      <td>${t.especialidad || '—'}</td>
-      <td>${t.zona_cobertura || '—'}</td>
-      <td>${t.comision_porcentaje || 40}%</td>
-      <td>${t.ot_activas > 0 ? `<span class="badge bg-info">${t.ot_activas}</span>` : '<span class="text-muted">0</span>'}</td>
+      <td><strong>${t.nombre} ${t.apellido || ''}</strong><br><small class="text-muted d-mobile-only">${t.telefono || ''}</small></td>
+      <td class="d-none-mobile">${t.telefono || '—'}</td>
+      <td class="d-none-mobile">${t.especialidad || '—'}</td>
+      <td class="d-none-mobile">${t.zona_cobertura || '—'}</td>
+      <td class="d-none-mobile">${t.comision_porcentaje || 40}%</td>
+      <td class="d-none-mobile">${t.ot_activas > 0 ? `<span class="badge bg-info">${t.ot_activas}</span>` : '<span class="text-muted">0</span>'}</td>
       <td>${t.activo ? '<span class="badge badge-aprobada">Activo</span>' : '<span class="badge badge-cancelada">Inactivo</span>'}</td>
       <td>
         <button class="btn btn-info btn-sm btn-accion" onclick="editarTecnico(${t.id})">

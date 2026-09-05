@@ -42,12 +42,12 @@ async function loadOrdenes() {
               <tr>
                 <th>OT#</th>
                 <th>Cliente</th>
-                <th>Vehículo</th>
-                <th>Fecha</th>
-                <th>Técnico</th>
+                <th class="d-none-mobile">Vehículo</th>
+                <th class="d-none-mobile">Fecha</th>
+                <th class="d-none-mobile">Técnico</th>
                 <th>Total</th>
                 <th>Estado</th>
-                <th>Tipo</th>
+                <th class="d-none-mobile">Tipo</th>
                 <th>Acciones</th>
               </tr>
             </thead>
@@ -84,12 +84,12 @@ function renderOrdenRow(o) {
     <tr>
       <td><strong>#${num}</strong></td>
       <td>${o.cliente_nombre || '—'}<br><small class="text-muted">${o.cliente_telefono || ''}</small></td>
-      <td>${vehiculo} ${patente}</td>
-      <td>${o.fecha_programada || o.fecha_ingreso || '—'}</td>
-      <td>${o.tecnico_nombre || '<span class="text-muted">Sin asignar</span>'}</td>
+      <td class="d-none-mobile">${vehiculo} ${patente}</td>
+      <td class="d-none-mobile">${o.fecha_programada || o.fecha_ingreso || '—'}</td>
+      <td class="d-none-mobile">${o.tecnico_nombre || '<span class="text-muted">Sin asignar</span>'}</td>
       <td>${fmtMoney(o.monto_total)}</td>
       <td><span class="badge ${estadoClass}">${o.estado_trabajo || '—'}</span></td>
-      <td>${tipoIcon}</td>
+      <td class="d-none-mobile">${tipoIcon}</td>
       <td>
         <button class="btn btn-info btn-sm btn-accion" onclick="verOrden(${o.id})">
           <i class="fas fa-eye"></i>

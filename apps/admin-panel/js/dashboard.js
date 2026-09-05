@@ -13,7 +13,7 @@ async function loadDashboard() {
     const fmtMoney = (n) => '$' + new Intl.NumberFormat('es-CL').format(Math.round(n));
 
     document.getElementById('view-dashboard').innerHTML = `
-      <h2 class="mb-4"><i class="fas fa-tachometer-alt"></i> Dashboard</h2>
+      <h2 class="mb-3"><i class="fas fa-tachometer-alt"></i> Dashboard</h2>
 
       <div class="kpi-grid">
         <div class="kpi-card">
@@ -24,17 +24,17 @@ async function loadDashboard() {
         <div class="kpi-card kpi-warning">
           <i class="fas fa-clock kpi-icon"></i>
           <div class="kpi-value">${k.citas_pendientes_aprobacion}</div>
-          <p class="kpi-label">Citas por aprobar</p>
+          <p class="kpi-label">Por aprobar</p>
         </div>
         <div class="kpi-card kpi-info">
           <i class="fas fa-check-circle kpi-icon"></i>
           <div class="kpi-value">${k.citas_aprobadas_total}</div>
-          <p class="kpi-label">Citas aprobadas (total)</p>
+          <p class="kpi-label">Aprobadas</p>
         </div>
         <div class="kpi-card">
           <i class="fas fa-calendar-alt kpi-icon"></i>
           <div class="kpi-value">${k.citas_mes_actual}</div>
-          <p class="kpi-label">Citas este mes</p>
+          <p class="kpi-label">Este mes</p>
         </div>
       </div>
 
@@ -47,17 +47,17 @@ async function loadDashboard() {
         <div class="kpi-card">
           <i class="fas fa-check-double kpi-icon"></i>
           <div class="kpi-value">${k.ot_completadas_mes}</div>
-          <p class="kpi-label">OT completadas (mes)</p>
+          <p class="kpi-label">OT completadas</p>
         </div>
         <div class="kpi-card kpi-danger">
           <i class="fas fa-bolt kpi-icon"></i>
           <div class="kpi-value">${k.ot_express_pendientes}</div>
-          <p class="kpi-label">OT Express pendientes</p>
+          <p class="kpi-label">OT Express pend.</p>
         </div>
         <div class="kpi-card kpi-info">
           <i class="fas fa-dollar-sign kpi-icon"></i>
-          <div class="kpi-value" style="font-size:1.6rem;">${fmtMoney(k.ingresos_mes)}</div>
-          <p class="kpi-label">Ingresos del mes</p>
+          <div class="kpi-value" style="font-size:1.2rem;">${fmtMoney(k.ingresos_mes)}</div>
+          <p class="kpi-label">Ingresos mes</p>
         </div>
       </div>
 
@@ -69,8 +69,8 @@ async function loadDashboard() {
         </div>
       </div>
 
-      <div class="row">
-        <div class="col-md-6">
+      <div class="row g-2">
+        <div class="col-12 col-lg-6">
           <div class="section-card">
             <div class="section-card-header">
               <h3><i class="fas fa-history"></i> Últimas 10 citas</h3>
@@ -83,7 +83,7 @@ async function loadDashboard() {
                     <th>Cliente</th>
                     <th>Servicio</th>
                     <th>Estado</th>
-                    <th>Tipo</th>
+                    <th class="d-none-mobile">Tipo</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -93,7 +93,7 @@ async function loadDashboard() {
                       <td>${c.nombre_cliente || '—'}<br><small class="text-muted">${c.telefono || ''}</small></td>
                       <td>${c.servicio || '—'}</td>
                       <td><span class="badge badge-${c.estado_aprobacion || 'pendiente'}">${c.estado_aprobacion || 'pendiente'}</span></td>
-                      <td>${c.tipo_atencion === 'domicilio' ? '🏠 Dom.' : '🔧 Taller'}</td>
+                      <td class="d-none-mobile">${c.tipo_atencion === 'domicilio' ? '🏠 Dom.' : '🔧 Taller'}</td>
                     </tr>
                   `).join('')}
                 </tbody>
@@ -101,7 +101,7 @@ async function loadDashboard() {
             </div>
           </div>
         </div>
-        <div class="col-md-6">
+        <div class="col-12 col-lg-6">
           <div class="section-card">
             <div class="section-card-header">
               <h3><i class="fas fa-calendar-plus"></i> Próximas citas</h3>
@@ -113,8 +113,8 @@ async function loadDashboard() {
                     <th>Fecha</th>
                     <th>Hora</th>
                     <th>Cliente</th>
-                    <th>Servicio</th>
-                    <th>Patente</th>
+                    <th class="d-none-mobile">Servicio</th>
+                    <th class="d-none-mobile">Patente</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -123,8 +123,8 @@ async function loadDashboard() {
                       <td>${c.fecha_cita}</td>
                       <td>${c.hora_cita}</td>
                       <td>${c.nombre_cliente || '—'}</td>
-                      <td>${c.servicio || '—'}</td>
-                      <td>${c.patente || '—'}</td>
+                      <td class="d-none-mobile">${c.servicio || '—'}</td>
+                      <td class="d-none-mobile">${c.patente || '—'}</td>
                     </tr>
                   `).join('')}
                 </tbody>
@@ -134,8 +134,8 @@ async function loadDashboard() {
         </div>
       </div>
 
-      <div class="row">
-        <div class="col-md-12">
+      <div class="row g-2">
+        <div class="col-12">
           <div class="section-card">
             <div class="section-card-header">
               <h3><i class="fas fa-chart-pie"></i> Citas por servicio (mes actual)</h3>

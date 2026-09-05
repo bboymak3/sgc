@@ -28,14 +28,16 @@ async function loadCalendario() {
     const el = document.getElementById('fullcalendar');
     if (!el) return;
 
+    // Detectar móvil para elegir vista inicial
+    const isMobile = window.innerWidth < 768;
+    const initialView = isMobile ? 'listWeek' : 'dayGridMonth';
+
     calendarInstance = new FullCalendar.Calendar(el, {
       locale: 'es',
-      initialView: 'dayGridMonth',
-      headerToolbar: {
-        left: 'prev,next today',
-        center: 'title',
-        right: 'dayGridMonth,timeGridWeek,timeGridDay,listWeek'
-      },
+      initialView,
+      headerToolbar: isMobile
+        ? { left: 'prev,next,today', center: 'title', right: 'dayGridDay,listWeek' }
+        : { left: 'prev,next today', center: 'title', right: 'dayGridMonth,timeGridWeek,timeGridDay,listWeek' },
       buttonText: {
         today: 'Hoy',
         month: 'Mes',
@@ -51,6 +53,17 @@ async function loadCalendario() {
       slotMinTime: '07:00:00',
       slotMaxTime: '21:00:00',
       firstDay: 1,
+      handleWindowResize: true,
+      windowResizeDelay: 200,
+      windowResize: function(view) {
+        // Cambiar vista automáticamente al redimensionar
+        const w = window.innerWidth;
+        if (w < 768 && !['listWeek', 'dayGridDay', 'timeGridDay'].includes(view.type)) {
+          calendarInstance.changeView('listWeek');
+        } else if (w >= 768 && view.type === 'listWeek' && calendarInstance.currentData?.viewSpecs?.dayGridMonth) {
+          // No forzar cambio en desktop si el usuario eligió Lista
+        }
+      },
 
       events: function(info, successCallback, failureCallback) {
         const inicio = info.startStr.split('T')[0];

@@ -40,11 +40,11 @@ async function loadCitas() {
                 <th>ID</th>
                 <th>Fecha</th>
                 <th>Cliente</th>
-                <th>Vehículo</th>
-                <th>Servicio</th>
-                <th>Tipo</th>
+                <th class="d-none-mobile">Vehículo</th>
+                <th class="d-none-mobile">Servicio</th>
+                <th class="d-none-mobile">Tipo</th>
                 <th>Estado</th>
-                <th>Canal</th>
+                <th class="d-none-mobile">Canal</th>
                 <th>Acciones</th>
               </tr>
             </thead>
@@ -95,11 +95,11 @@ function renderCitaRow(c) {
       <td>#${c.id}</td>
       <td>${c.fecha_cita}<br><small class="text-muted">${c.hora_cita}</small></td>
       <td>${c.nombre_cliente || '—'}<br><small class="text-muted">${c.telefono || ''}</small></td>
-      <td>${vehiculo} ${patente}</td>
-      <td>${c.servicio || '—'}</td>
-      <td>${tipoIcon}</td>
+      <td class="d-none-mobile">${vehiculo} ${patente}</td>
+      <td class="d-none-mobile">${c.servicio || '—'}</td>
+      <td class="d-none-mobile">${tipoIcon}</td>
       <td>${estadoBadge}</td>
-      <td>${canalIcon} ${c.canal}</td>
+      <td class="d-none-mobile">${canalIcon} ${c.canal}</td>
       <td>${acciones}</td>
     </tr>
   `;
