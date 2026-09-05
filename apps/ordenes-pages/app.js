@@ -5144,7 +5144,7 @@ function verInformeCliente(idx) {
 // sistema de recordatorios (sgc-recordatorios worker)
 // ============================================
 
-const RECORDATORIO_API = 'https://sgc-recordatorios.workers.dev';
+const RECORDATORIO_API = 'https://sgc-recordatorios.correo36000.workers.dev';
 
 async function registrarRecordatoriosCliente(nombreCliente, telefono, patentesEncoded) {
     const patentes = JSON.parse(decodeURIComponent(patentesEncoded));
@@ -7999,7 +7999,7 @@ async function cargarEventosCalendario(startStr, endStr) {
 
         // 3. Citas agendadas via Chat IA (Worker sgc-citas)
         try {
-            const citasResp = await fetch('https://sgc-citas.workers.dev/api/citas/rango?inicio=' + startStr.split('T')[0] + '&fin=' + endStr.split('T')[0]);
+            const citasResp = await fetch('https://sgc-citas.correo36000.workers.dev/api/citas/rango?inicio=' + startStr.split('T')[0] + '&fin=' + endStr.split('T')[0]);
             const citasData = await citasResp.json();
             if (citasData.success && citasData.citas) {
                 citasData.citas.forEach(c => {
@@ -8457,7 +8457,7 @@ async function eliminarEventoPorDrag(event) {
 // ═══════════════════════════════════════════════════════════════
 // ÓRDENES DEL BOT IA — Aprobar / Rechazar
 // ═══════════════════════════════════════════════════════════════
-const CITAS_API = 'https://sgc-citas.workers.dev/api/citas-admin';
+const CITAS_API = 'https://sgc-citas.correo36000.workers.dev/api/citas-admin';
 let ordenesBotAutoRefresh = null;
 let _ultimoPendientesCount = -1;
 let _ultimoPendientesIds = [];
@@ -8487,8 +8487,8 @@ function enviarPushNuevaCita(cita) {
 
     var notif = new Notification('🤖 Nueva Cita del Bot IA', {
         body: cliente + ' — ' + servicio + '\n' + tipo + ' | ' + fecha,
-        icon: 'https://sgc-citas.workers.dev/favicon.ico',
-        badge: 'https://sgc-citas.workers.dev/favicon.ico',
+        icon: 'https://sgc-citas.correo36000.workers.dev/favicon.ico',
+        badge: 'https://sgc-citas.correo36000.workers.dev/favicon.ico',
         tag: 'cita-bot-' + cita.id,
         requireInteraction: true,
         vibrate: [200, 100, 200, 100, 200]
