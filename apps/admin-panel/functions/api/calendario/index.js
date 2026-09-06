@@ -150,10 +150,13 @@ export async function onRequestGet(context) {
 
     // ============================================
     // 3. Citas del chat IA (sgc_citas_db)
+    // IMPORTANTE: No mostrar citas que ya tienen OT creada (orden_enviada=1)
+    // porque ya están representadas en la sección de OT/AgendaTecnicos.
+    // Solo mostrar citas pendientes (sin OT asociada).
     // ============================================
-    let citasConds = ['fecha_cita >= ?', 'fecha_cita <= ?'];
+    let citasConds = ['fecha_cita >= ?', 'fecha_cita <= ?', 'orden_enviada = 0'];
     let citasParams = [inicio, fin];
-    // No filtramos por estado_aprobacion para mostrar todas
+    // No filtramos por estado_aprobacion para mostrar todas las pendientes
 
     const citasResult = await env.CITAS_DB.prepare(
       `SELECT id, fecha_cita, hora_cita, servicio, estado, estado_aprobacion,
