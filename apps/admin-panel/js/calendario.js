@@ -95,6 +95,11 @@ async function loadCalendario() {
       // Click en evento = ver detalle
       eventClick: function(info) {
         info.jsEvent.preventDefault();
+        // Cerrar/ocultar cualquier tooltip abierto antes de mostrar el modal
+        // para evitar que el tooltip se quede solapado encima del modal
+        document.querySelectorAll('.tooltip.show').forEach(t => t.remove());
+        const bsTooltip = bootstrap.Tooltip.getInstance(info.el);
+        if (bsTooltip) bsTooltip.hide();
         verDetalleEvento(info.event);
       },
 

@@ -425,6 +425,21 @@ textarea.form-control {
   z-index: 1100;
 }
 
+/* === Tooltips: siempre debajo de los modales === */
+.tooltip {
+  z-index: 1050 !important;
+}
+.tooltip.show {
+  z-index: 1050 !important;
+}
+/* Asegurar que el modal este por encima del tooltip */
+.modal {
+  z-index: 1080 !important;
+}
+.modal-backdrop {
+  z-index: 1070 !important;
+}
+
 /* === FullCalendar responsive === */
 .fc {
   font-size: 0.8rem;
