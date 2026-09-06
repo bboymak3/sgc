@@ -91,9 +91,15 @@ function renderOrdenRow(o) {
       <td><span class="badge ${estadoClass}">${o.estado_trabajo || '—'}</span></td>
       <td class="d-none-mobile">${tipoIcon}</td>
       <td>
-        <button class="btn btn-info btn-sm btn-accion" onclick="verOrden(${o.id})">
+        <button class="btn btn-info btn-sm btn-accion" onclick="verOrden(${o.id})" title="Ver detalle">
           <i class="fas fa-eye"></i>
         </button>
+        ${o.estado_trabajo !== 'Completada' && o.estado_trabajo !== 'Cerrada'
+          ? `<button class="btn btn-success btn-sm btn-accion" onclick="completarOrden(${o.id})" title="Marcar como completada">
+              <i class="fas fa-check"></i>
+            </button>`
+          : ''
+        }
       </td>
     </tr>
   `;
@@ -269,8 +275,107 @@ async function verOrden(id) {
     `;
     document.getElementById('sgc-modal-footer').innerHTML = `
       <button class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+      ${o.estado_trabajo !== 'Completada' && o.estado_trabajo !== 'Cerrada'
+        ? `<button class="btn btn-success" onclick="completarOrden(${o.id})">
+            <i class="fas fa-check"></i> Marcar como Completada
+          </button>
+          <button class="btn btn-warning" onclick="mostrarCambiarEstado(${o.id}, '${o.estado_trabajo || ''}')">
+            <i class="fas fa-edit"></i> Cambiar estado
+          </button>`
+        : `<button class="btn btn-warning" onclick="mostrarCambiarEstado(${o.id}, '${o.estado_trabajo || ''}')">
+            <i class="fas fa-edit"></i> Cambiar estado
+          </button>`
+      }
     `;
     new bootstrap.Modal(document.getElementById('sgc-modal')).show();
+  } catch (err) {
+    showToast(err.message, 'error');
+  }
+}
+
+// === Completar orden directamente ===
+async function completarOrden(id) {
+  if (!confirm('¿Marcar esta orden de trabajo como COMPLETADA?\n\nEsto registrará la fecha de completado y actualizará el estado.')) return;
+  try {
+    const resp = await apiFetch(`/api/ordenes/${id}`, {
+      method: 'PUT',
+      body: JSON.stringify({
+        estado_trabajo: 'Completada',
+        estado: 'Aprobada',
+        fecha_completado: new Date().toISOString().split('T')[0]
+      })
+    });
+    const data = await resp.json();
+    if (!data.success) throw new Error(data.error);
+    // Cerrar modal si está abierto
+    const modalEl = document.getElementById('sgc-modal');
+    const bsModal = bootstrap.Modal.getInstance(modalEl);
+    if (bsModal) bsModal.hide();
+    showToast('✅ Orden marcada como completada');
+    loadOrdenes();
+  } catch (err) {
+    showToast(err.message, 'error');
+  }
+}
+
+// === Mostrar modal para cambiar a cualquier estado ===
+async function mostrarCambiarEstado(id, estadoActual) {
+  const estados = [
+    { value: 'Pendiente', label: '⏳ Pendiente', color: 'badge-pendiente' },
+    { value: 'En Proceso', label: '🔄 En Proceso', color: 'badge-pendiente' },
+    { value: 'Completada', label: '✅ Completada', color: 'badge-aprobada' },
+    { value: 'Cerrada', label: '🔒 Cerrada', color: 'badge-confirmada' },
+    { value: 'Cancelada', label: '❌ Cancelada', color: 'badge-cancelada' }
+  ];
+
+  // Cerrar modal anterior si está abierto
+  const modalEl = document.getElementById('sgc-modal');
+  const bsModal = bootstrap.Modal.getInstance(modalEl);
+  if (bsModal) bsModal.hide();
+
+  await new Promise(r => setTimeout(r, 300)); // esperar que se cierre
+
+  document.getElementById('sgc-modal-title').textContent = 'Cambiar estado de OT #' + String(id).padStart(6, '0');
+  document.getElementById('sgc-modal-body').innerHTML = `
+    <p class="text-muted">Estado actual: <span class="badge ${estados.find(e => e.value === estadoActual)?.color || 'badge-cancelada'}">${estadoActual || '—'}</span></p>
+    <p>Selecciona el nuevo estado:</p>
+    <div class="d-grid gap-2">
+      ${estados.map(e => `
+        <button class="btn btn-outline-${e.value === estadoActual ? 'secondary disabled' : 'primary'} btn-lg"
+                ${e.value === estadoActual ? 'disabled' : ''}
+                onclick="cambiarEstadoOrden(${id}, '${e.value}')">
+          <span class="badge ${e.color} me-2">${e.value}</span>
+          ${e.label}
+        </button>
+      `).join('')}
+    </div>
+  `;
+  document.getElementById('sgc-modal-footer').innerHTML = `
+    <button class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+  `;
+  new bootstrap.Modal(document.getElementById('sgc-modal')).show();
+}
+
+async function cambiarEstadoOrden(id, nuevoEstado) {
+  const updateBody = {
+    estado_trabajo: nuevoEstado,
+    estado: nuevoEstado === 'Cancelada' ? 'Cancelada' : (nuevoEstado === 'Cerrada' || nuevoEstado === 'Completada' ? 'Aprobada' : 'Enviada')
+  };
+  if (nuevoEstado === 'Completada') {
+    updateBody.fecha_completado = new Date().toISOString().split('T')[0];
+  }
+  try {
+    const resp = await apiFetch(`/api/ordenes/${id}`, {
+      method: 'PUT',
+      body: JSON.stringify(updateBody)
+    });
+    const data = await resp.json();
+    if (!data.success) throw new Error(data.error);
+    const modalEl = document.getElementById('sgc-modal');
+    const bsModal = bootstrap.Modal.getInstance(modalEl);
+    if (bsModal) bsModal.hide();
+    showToast('✅ Estado actualizado a: ' + nuevoEstado);
+    loadOrdenes();
   } catch (err) {
     showToast(err.message, 'error');
   }
